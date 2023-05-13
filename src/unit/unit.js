@@ -15,7 +15,7 @@ const title = document.getElementById('titleDialog')
 const body = document.getElementById('bodyPage')
 const loading = document.getElementById('loading')
 const openDialogButton = document.getElementById('opendialogbutton')
-const loader = initLoader(loading, body)
+const loader = initLoader(body);
 
 let unitItems = []
 let idSelect = null

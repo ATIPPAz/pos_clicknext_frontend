@@ -7,6 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="../../main.css" />
   <link rel="stylesheet" href="./item.css" />
+
   <script src="./item.js" type="module"></script>
   <title>Document</title>
 </head>
@@ -27,10 +28,10 @@
               <tr class="tr">
                 <th class="th" style="width: 5%">No.</th>
                 <th class="th" style="width: 20%">รหัสสินค้า</th>
-                <th class="th" style="width: 50%">ชื่อสินค้า</th>
+                <th class="th" style="width: 47%">ชื่อสินค้า</th>
                 <th class="th" style="width: 10%">หน่วย</th>
                 <th class="th" style="width: 8%">ราคา</th>
-                <th class="th" style="width: 7%">ดำเนินการ</th>
+                <th class="th" style="width: 10%">ดำเนินการ</th>
               </tr>
             </thead>
             <tbody id="tableBody"></tbody>
@@ -75,7 +76,7 @@
       </div>
     </div>
   </div>
-  <div id="loading" class="loader d-flex"></div>
+
   <template id="tableRow">
     <td class="rowNumber th"></td>
     <td class="rowItemCode th"></td>
@@ -83,8 +84,8 @@
     <td class="rowItemUnit th"></td>
     <td class="rowItemPrice th"></td>
     <td class="th">
-      <button class="editButton" style="width: 48%;">แก้ไข</button>
-      <button class="deleteButton" style="width: 48%;">ลบ</button>
+      <button class="editButton" style="width: 46%;">แก้ไข</button>
+      <button class="deleteButton" style="width:46%;">ลบ</button>
     </td>
   </template>
 </body>
