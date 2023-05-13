@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../../main.css" />
+  <link rel="stylesheet" href="./pos.css" />
+  <script src="./pos.js" type="module"></script>
+  <title>Document</title>
+</head>
+
+<body style="width: 100%; margin: 0px" class="bodyPage">
+  <div class="d-block" id="bodyPage">
+    <div class="container">
+      <a href="../../index.html">กลับ</a>
+      <div class="card-content" style="margin-top: 24px">
+        <div class="card-header">ออกใบเสร็จรับเงิน</div>
+        <div style="margin-bottom: 14px">
+          <label for="">เลขที่เอกสาร:</label> <br />
+          <input type="text" name="" id="docId" disabled value="TXXXX" />
+          <br />
+          <label for=""> วันที่</label> <br />
+          <input type="text" name="" id="dateNow" disabled />
+        </div>
+
+        <table class="table" id="dataTable">
+          <caption></caption>
+          <thead>
+            <tr>
+              <th class="th" style="width: 50px">No.</th>
+              <th class="th" style="width: 700px">รหัสสินค้า</th>
+              <th class="th" style="width: 600px">ชื่อสินค้า</th>
+              <th class="th" style="width: 600px">หน่วย</th>
+              <th class="th" style="width: 400px">จำนวน</th>
+              <th class="th" style="width: 400px">ราคา</th>
+              <th class="th" style="width: 400px">ส่วนลด (%)</th>
+              <th class="th" style="width: 400px">ส่วนลด (บาท)</th>
+              <th class="th" style="width: 400px">รวมเงิน</th>
+              <th class="th" style="width: 400px">ดำเนินการ</th>
+            </tr>
+          </thead>
+          <tbody id="posTable"></tbody>
+        </table>
+        <div class="j-end" style="margin-top: 14px">
+          <table>
+            <caption></caption>
+            <thead>
+              <tr>
+                <th scope="col"></th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="t-start">ยอดรวมสินค้าก่อนลด</td>
+                <td>
+                  <input type="text" name="" id="" value="0" disabled /><br />
+                </td>
+              </tr>
+              <tr>
+                <td class="t-start">ยอดรวมส่วนลดสินค้า</td>
+                <td>
+                  <input type="text" name="" id="" value="0" disabled /><br />
+                </td>
+              </tr>
+              <tr>
+                <td class="t-start">Subtotal</td>
+                <td>
+                  <input type="text" name="" id="" value="0" disabled /><br />
+                </td>
+              </tr>
+              <tr>
+                <td class="t-start">ส่วนลดการค้า</td>
+                <td><input type="text" name="" id="" value="0" /><br /></td>
+              </tr>
+              <tr>
+                <td class="t-start">Grand total</td>
+                <td>
+                  <input type="text" name="" id="" value="0" disabled /><br />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="margin-top: 14px" class="j-end">
+          <button>บันทึก</button>
+        </div>
+      </div>
+    </div>
+    <div id="dialogAddItemPos" class="modal">
+      <div class="modal-content">
+        <div class="model-header">
+          <span onclick="onDialogClose('dialogAddUnit')" class="close">&times;</span>
+          <p class="model-title">เลือกสินค้า</p>
+        </div>
+        <div class="model-body">
+          <div id="posItem"></div>
+          <hr />
+          <div id="itemSelect"></div>
+        </div>
+        <div class="model-footer">
+          <div>
+            <button onclick="onDialogCloseAndClear('unit','dialogAddUnit')">
+              close
+            </button>
+            <button onclick="addNewUnit()">select this item</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <template id="itemRow">
+      <td class="rowNumber th"></td>
+      <td class="th">
+        <button class="addNewItem" style="width: 100%">เลือกสินค้า</button>
+        <button class="changeNewItem" style="width: 100%">แก้ไขสินค้า</button>
+      </td>
+      <td class="rowItemName th"></td>
+      <td class="rowItemUnit th"></td>
+      <td class="th">
+        <input class="rowItemQty" type="number" value="0" min="0" disabled />
+      </td>
+      <td class="rowItemPrice th">0</td>
+      <td class="th">
+        <input class="rowItemDiscountPercent" type="number" name="" id="" value="0" min="0" disabled />
+      </td>
+      <td class="th rowItemDiscount">
+        <input type="number" name="" id="" value="0" min="0" disabled />
+      </td>
+      <td class="rowItemTotal th">0</td>
+      <td class="th">
+        <button class="deleteButton" disabled>ลบ</button>
+      </td>
+    </template>
+  </div>
+  <div id="loading" class="loader d-flex"></div>
+</body>
+
+</html>

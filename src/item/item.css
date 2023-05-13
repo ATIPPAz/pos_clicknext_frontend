@@ -1,0 +1,14 @@
+.item-grid {
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: 10px;
+  padding: 10px;
+}
+
+#edit {
+  display: none;
+}
+
+#add {
+  display: inline-block;
+}
