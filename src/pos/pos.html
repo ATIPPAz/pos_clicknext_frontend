@@ -6,12 +6,12 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="../../main.css" />
-  <link rel="stylesheet" href="./pos.css" />
+  <!-- <link rel="stylesheet" href="./pos.css" /> -->
   <script src="./pos.js" type="module"></script>
   <title>Document</title>
 </head>
 
-<body style="width: 100%; margin: 0px" class="bodyPage">
+<body style="width: 100%; margin: 0px" >
   <div class="d-block" id="bodyPage">
     <div class="container">
       <a href="../../index.html">กลับ</a>
@@ -92,7 +92,7 @@
     <div id="dialogAddItemPos" class="modal">
       <div class="modal-content">
         <div class="model-header">
-          <span onclick="onDialogClose('dialogAddUnit')" class="close">&times;</span>
+          <span  id="close" class="close">&times;</span>
           <p class="model-title">เลือกสินค้า</p>
         </div>
         <div class="model-body">
@@ -105,7 +105,7 @@
             <button onclick="onDialogCloseAndClear('unit','dialogAddUnit')">
               close
             </button>
-            <button onclick="addNewUnit()">select this item</button>
+            <button onclick="addNewUnit()" id="addNewItem">select this item</button>
           </div>
         </div>
       </div>
@@ -131,7 +131,7 @@
       </td>
       <td class="rowItemTotal th">0</td>
       <td class="th">
-        <button class="deleteButton" disabled>ลบ</button>
+        <button class="deleteButton" style="width: 100%;" disabled>ลบ</button>
       </td>
     </template>
   </div>

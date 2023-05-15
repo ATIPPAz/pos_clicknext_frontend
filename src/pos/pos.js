@@ -1,6 +1,7 @@
-import { addDataInTable, openDialog } from '../../main.js'
+import { openDialog, onDialogClose } from "../../main.js";
 import { initLoader } from "../../plugins/loading.js";
 const body = document.getElementById("bodyPage");
+const closeDialog = document.getElementById("dialogAddItemPos");
 const loader = initLoader(body);
 const dateNow = document.getElementById("dateNow");
 const dataTable = document.getElementById("dataTable");
@@ -119,6 +120,7 @@ const addNewItem = () => {
     unitId: newItem.unitId,
   });
   createTableRow("createNewRow", true);
+  openDialog("dialogAddItemPos");
 };
 const changeNewItem = () => {
   console.log("testse");
@@ -133,7 +135,7 @@ const createTableRow = (id, isCreate = false) => {
   const addBtn = tr.querySelector(".addNewItem");
   const changeNewItemButton = tr.querySelector(".changeNewItem");
   changeNewItemButton.addEventListener("click", () => changeNewItem());
-  addBtn.addEventListener("click", addNewItem);
+  addBtn.addEventListener("click", () => addNewItem());
   rowNumber.textContent = dataTable.rows.length;
   if (!isCreate) {
     const rowItemQty = tr.querySelector(".rowItemQty");
@@ -204,11 +206,14 @@ const posFuction = {
   },
 };
 function onload() {
+  closeDialog.addEventListener("click", () =>
+    onDialogClose("dialogAddItemPos")
+  );
   loader.setLoadingOn();
   createTableRow("createNewRow", true);
   for (let index = 0; index < 10; index++) {
     const item = {
-      itemId: dataTable.rows.length * 3 + 5 * 4,
+      itemId: "itemId" + index,
       itemName: "fjdkpl",
       unitName: "fkld",
       Qty: 12,
@@ -230,7 +235,7 @@ function onload() {
   dateNow.value = dateTime;
   loader.setLoadingOff();
 }
-onload()
+onload();
 for (const key in posFuction) {
-  window[key] = posFuction[key]
+  window[key] = posFuction[key];
 }
