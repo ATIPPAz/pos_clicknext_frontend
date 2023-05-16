@@ -1,93 +1,97 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../../main.css" />
+    <link rel="stylesheet" href="./item.css" />
 
-<head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="../../main.css" />
-  <link rel="stylesheet" href="./item.css" />
+    <script src="./item.js" type="module"></script>
+    <title>Item Setting</title>
+  </head>
 
-  <script src="./item.js" type="module"></script>
-  <title>Document</title>
-</head>
-
-<body style="width: 100%; margin: 0px">
-  <div class="d-block" id="bodyPage">
-    <div class="container">
-      <a href="../../index.html">กลับ</a>
-      <div class="card-content" style="margin-top: 24px">
-        <div class="card-header">ตั้งค่าสินค้า</div>
-        <div class="j-end" style="margin-bottom: 14px">
-          <button id="opendialogbutton">เพิ่ม</button>
-        </div>
-        <div class="table-border">
-          <table class="table" id="itemTable">
-            <caption></caption>
-            <thead>
-              <tr class="tr">
-                <th class="th" style="width: 5%">No.</th>
-                <th class="th" style="width: 20%">รหัสสินค้า</th>
-                <th class="th" style="width: 47%">ชื่อสินค้า</th>
-                <th class="th" style="width: 10%">หน่วย</th>
-                <th class="th" style="width: 8%">ราคา</th>
-                <th class="th" style="width: 10%">ดำเนินการ</th>
-              </tr>
-            </thead>
-            <tbody id="tableBody"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-    <div id="dialogItem" class="modal">
-      <div class="modal-content">
-        <div class="model-header">
-          <span class="close " id="closeDialogButton">&times;</span>
-          <p class="model-title" id="titleDialog">เพิ่มสินค้า</p>
-        </div>
-        <div class="model-body">
-          <div class="item-grid">
-            <div class="item">
-              รหัสสินค้า: <br />
-              <input type="text" id="itemCode" />
-            </div>
-            <div class="item">
-              ชื่อสินค้า: <br />
-              <input type="text" id="itemName" />
-            </div>
-            <div class="item">
-              ราคา: <br />
-
-              <input type="number" id="itemPrice" min="0" step="1" value="0" />
-            </div>
-            <div class="item">
-              หน่วย: <br />
-              <select name="itemDropdown" id="itemDropdown"></select>
-            </div>
+  <body style="width: 100%; margin: 0px">
+    <div class="d-block" id="bodyPage">
+      <div class="container">
+        <a href="../../index.html">กลับ</a>
+        <div class="card-content" style="margin-top: 24px">
+          <div class="card-header">ตั้งค่าสินค้า</div>
+          <div class="j-end" style="margin-bottom: 14px">
+            <button id="opendialogbutton">เพิ่ม</button>
           </div>
-        </div>
-        <div class="model-footer">
-          <div>
-            <button class="closeDialogButton">close</button>
-            <button id="add">Save changes</button>
-            <button id="edit">Save changes</button>
+          <div class="table-border">
+            <table class="table" id="itemTable">
+              <caption></caption>
+              <thead>
+                <tr class="tr">
+                  <th class="th" style="width: 5%">No.</th>
+                  <th class="th" style="width: 20%">รหัสสินค้า</th>
+                  <th class="th" style="width: 47%">ชื่อสินค้า</th>
+                  <th class="th" style="width: 10%">หน่วย</th>
+                  <th class="th" style="width: 8%">ราคา</th>
+                  <th class="th" style="width: 10%">ดำเนินการ</th>
+                </tr>
+              </thead>
+              <tbody id="tableBody"></tbody>
+            </table>
           </div>
         </div>
       </div>
+      <div id="dialogItem" class="modal">
+        <div class="modal-content">
+          <div class="model-header">
+            <span class="close" id="closeDialogButton">&times;</span>
+            <p class="model-title" id="titleDialog">เพิ่มสินค้า</p>
+          </div>
+          <div class="model-body">
+            <div class="item-grid">
+              <div class="item">
+                รหัสสินค้า: <br />
+                <input type="text" id="itemCode" />
+              </div>
+              <div class="item">
+                ชื่อสินค้า: <br />
+                <input type="text" id="itemName" />
+              </div>
+              <div class="item">
+                ราคา: <br />
+
+                <input
+                  type="number"
+                  id="itemPrice"
+                  min="0"
+                  step="1"
+                  value="0"
+                />
+              </div>
+              <div class="item">
+                หน่วย: <br />
+                <select name="itemDropdown" id="itemDropdown"></select>
+              </div>
+            </div>
+          </div>
+          <div class="model-footer">
+            <div>
+              <button class="closeDialogButton">close</button>
+              <button id="add">Save changes</button>
+              <button id="edit">Save changes</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
 
-  <template id="tableRow">
-    <td class="rowNumber th"></td>
-    <td class="rowItemCode th"></td>
-    <td class="rowItemName th"></td>
-    <td class="rowItemUnit th"></td>
-    <td class="rowItemPrice th"></td>
-    <td class="th">
-      <button class="editButton" style="width: 46%;">แก้ไข</button>
-      <button class="deleteButton" style="width:46%;">ลบ</button>
-    </td>
-  </template>
-</body>
-
+    <template id="tableRow">
+      <td class="rowNumber th"></td>
+      <td class="rowItemCode th"></td>
+      <td class="rowItemName th"></td>
+      <td class="rowItemUnit th"></td>
+      <td class="rowItemPrice th"></td>
+      <td class="th">
+        <button class="editButton" style="width: 46%">แก้ไข</button>
+        <button class="deleteButton" style="width: 46%">ลบ</button>
+      </td>
+    </template>
+  </body>
 </html>

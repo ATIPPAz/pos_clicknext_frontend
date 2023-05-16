@@ -5,7 +5,7 @@ export async function getUnit() {
   return await getRequest(`${endpoint}${controller}/getUnits`)
 }
 export async function createUnit(data) {
-  return await createRequest(`${endpoint}${controller}/getUnit`, data)
+  return await createRequest(`${endpoint}${controller}/createUnit`, data)
 }
 export async function updateUnit(data) {
   return await createRequest(`${endpoint}${controller}/updateUnit`, data)

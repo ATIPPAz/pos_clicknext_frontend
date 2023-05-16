@@ -2,65 +2,93 @@
 import { openDialog, onDialogClose } from '../../main.js'
 import { initLoader } from '../../plugins/loading.js'
 import * as UnitApi from '../../plugins/api/unitApi.js'
-
-const buttonSaveChange = document.getElementById('add')
-const buttonEditChange = document.getElementById('edit')
-const templateRowTable = document.getElementById('tableRow')
-const tableBody = document.getElementById('tableBody')
-const priceEdit = document.getElementById('itemPrice')
-const nameEdit = document.getElementById('itemName')
-const itemCodeEdit = document.getElementById('itemCode')
-const unitEdit = document.getElementById('itemDropdown')
-const title = document.getElementById('titleDialog')
+import { initToast } from '../../plugins/toast.js'
+const addButton = document.getElementById('addButton')
 const body = document.getElementById('bodyPage')
-const loading = document.getElementById('loading')
-const openDialogButton = document.getElementById('opendialogbutton')
-const loader = initLoader(body);
+const buttonSaveChange = document.getElementById('buttonSaveChange')
+const buttonEditChange = document.getElementById('buttonEditChange')
+const closeDialog = document.getElementById('closeDialog')
+const close = document.getElementById('close')
+const templateRowTable = document.getElementById('templateRowTable')
+const tableBody = document.getElementById('tableRow')
+const _unitName = document.getElementById('unitName')
+const _title = document.getElementById('titleDialog')
 
-let unitItems = []
-let idSelect = null
-const editNewUnit = () => {
-  const input = document.getElementById('unitEdit')
-  if (input.value != '') {
-    const table = document.getElementById('unitBody')
-    table.rows[idSelect].cells[1].innerHTML = input.value
-    onDialogCloseAndClear('unitEdit', 'dialogEditUnit')
-  }
+const loader = initLoader(body)
+const toast = initToast(body)
+
+const unitName = {
+  get value() {
+    return _unitName.value
+  },
+  set value(x) {
+    _unitName.value = x
+  },
 }
 
-function chageUnit(idx) {
-  openDialog('dialogEditUnit')
-  const unitEdit = document.getElementById('unitEdit')
-  const table = document.getElementById('unitBody')
-  idSelect = idx
-  unitEdit.value = table.rows[idSelect].cells[1].innerHTML
+const setDialog = {
+  get value() {
+    return _title.textContent
+  },
+  set value(x) {
+    if (x == 'add') {
+      _title.textContent = 'เพิ่มสินค้า'
+      buttonSaveChange.style.display = 'inline-block'
+      buttonEditChange.style.display = 'none'
+    } else {
+      _title.textContent = 'แก้ไขสินค้า'
+      buttonSaveChange.style.display = 'none'
+      buttonEditChange.style.display = 'inline-block'
+    }
+  },
+}
+
+let idSelect = null
+async function editNewUnit() {
+  loader.setLoadingOn()
+  if (unitName.value != '') {
+    const { statusCode } = await UnitApi.updateUnit({
+      unitId: +idSelect,
+      unitName: unitName.value,
+    })
+    if (statusCode != 204) {
+      toast.error('ไม่สำเร็จ', 'เกิดข้อผิดพลาด')
+    } else {
+      toast.success('แก้ไขสำเร็จ', 'แก้ไขหน่วยนับสำเร็จ')
+      onDialogClose('dialogUnit')
+      unitName.value = ''
+      await loadTable()
+    }
+  } else {
+    toast.error('ข้อมูลไม่ครบที่กำหนด', 'กรุณากรอกชื่อหน่วย')
+  }
+  loader.setLoadingOff()
+}
+
+function changeUnit(id, name) {
+  setDialog.value = 'edit'
+  unitName.value = name
+  idSelect = id
+  openDialog('dialogUnit')
 }
 async function deleteUnit(id) {
-  const unitBody = document.getElementById('unitBody')
-  let idx = 0
-  for (let index = 1; index < unitBody.rows.length; index++) {
-    if (unitBody.rows[index].cells[0].innerHTML == id) {
-      idx = index
-    }
+  loader.setLoadingOn()
+  const { statusCode } = await UnitApi.deleteUnit(id)
+  if (statusCode == 204) {
+    toast.success('ลบสำเร็จ', 'ลบหน่วยนับสำเร็จ')
+    await loadTable()
+  } else {
+    toast.success('ไม่สำเร็จ', 'เกิดข้อผิดพลาด')
   }
-  const res = await deleteRequest('unit/deleteUnit/', id)
-  if (res) {
-    document.getElementById('unitBody').deleteRow(idx)
-  }
-  setLoadingOn()
-  await getData()
-  addDataInTable('unitBody', [])
-  const rows = addDataInTable('unitBody', unitItems)
-  setActionButton(rows)
-  setLoadingOff()
+  loader.setLoadingOff()
 }
 async function getData() {
   const { statusCode, data } = await UnitApi.getUnit()
   if (statusCode === 200) {
     return data.map((e) => {
       return {
-        id: e.unitId,
-        name: e.unitName,
+        unitId: e.unitId,
+        unitName: e.unitName,
       }
     })
   }
@@ -68,36 +96,78 @@ async function getData() {
 }
 async function addNewUnit() {
   loader.setLoadingOn()
-  // const unitBody = document.getElementById('unitBody')
-  const input = document.getElementById('unit')
-  if (input.value != '') {
-    const res = await postRequest({ unitName: input.value }, 'unit/createUnit')
-    if (res.unitId) {
-      const unitNewItem = { id: res.unitId, name: res.unitName }
-      unitItems.push(unitNewItem)
-      addDataInTable('unitBody', [])
-      const rows = addDataInTable('unitBody', unitItems)
-      setActionButton(rows)
-      onDialogClose('dialogAddUnit')
-      input.value = ''
+  if (unitName.value != '') {
+    const { statusCode } = await UnitApi.createUnit({
+      unitName: unitName.value,
+    })
+    if (statusCode != 201) {
+      toast.error('ไม่สำเร็จ', 'เกิดข้อผิดพลาด')
+    } else {
+      toast.success('เพิ่มสำเร็จ', 'เพิ่มหน่วยนับสำเร็จ')
+      onDialogClose('dialogUnit')
+      unitName.value = ''
+      await loadTable()
     }
   } else {
-    alert('กรุณากรอกชื่อหน่วย')
+    toast.error('ข้อมูลไม่ครบที่กำหนด', 'กรุณากรอกชื่อหน่วย')
   }
   loader.setLoadingOff()
 }
-function setActionButton(row) {
-  row.row.forEach((element) => {
-    const id = element.cells[0].innerText
-    element.cells[2].innerHTML = `<div><button onclick="chageUnit('${id}')" >แก้ไข</button><button onclick="deleteUnit('${id}')">ลบ</button></div>`
-  })
+// function setActionButton(row) {
+//   row.row.forEach((element) => {
+//     const id = element.cells[0].innerText
+//     element.cells[2].innerHTML = `<div><button onclick="chageUnit('${id}')" >แก้ไข</button><button onclick="deleteUnit('${id}')">ลบ</button></div>`
+//   })
+// }
+function openAddUnitDialog() {
+  setDialog.value = 'add'
+  openDialog('dialogUnit')
+  unitName.value = ''
 }
-async function onMounted() {
+function closeDialogUnit() {
+  unitName.value = ''
+  onDialogClose('dialogUnit')
+}
+async function loadTable() {
   loader.setLoadingOn()
-  await this.getData()
-  const rows = addDataInTable('unitBody', unitItems)
-  this.setActionButton(rows)
+  tableBody.innerHTML = ''
+  const unitItems = await getData()
+  unitItems.forEach((unit, idx) => {
+    const row = createRow(idx + 1)
+    assignValue(row, unit)
+  })
   loader.setLoadingOff()
 }
+async function onMounted() {
+  closeDialog.addEventListener('click', () => closeDialogUnit())
+  close.addEventListener('click', () => closeDialogUnit())
+  addButton.addEventListener('click', () => openAddUnitDialog())
+  buttonSaveChange.addEventListener('click', () => addNewUnit())
+  buttonEditChange.addEventListener('click', () => editNewUnit())
+  await loadTable()
+}
+function assignValue(tr, item) {
+  const rowUnitName = tr.querySelector('.rowUnitName')
+  const editButton = tr.querySelector('.editButton')
+  const deleteButton = tr.querySelector('.deleteButton')
 
+  tr.dataset.rowUnitName = item.unitName
+  tr.dataset.unitId = item.unitId
+  rowUnitName.textContent = item.unitName
+  editButton.addEventListener('click', () =>
+    changeUnit(item.unitId, item.unitName),
+  )
+  deleteButton.addEventListener('click', () => deleteUnit(item.unitId))
+}
+function createRow(id) {
+  const tr = document.createElement('tr')
+  const clone = templateRowTable.content.cloneNode(true)
+
+  tr.dataset.counterIdx = id
+  tr.appendChild(clone)
+  const rowNumber = tr.querySelector('.rowNumber')
+  rowNumber.textContent = id
+  tableBody.appendChild(tr)
+  return tr
+}
 onMounted()

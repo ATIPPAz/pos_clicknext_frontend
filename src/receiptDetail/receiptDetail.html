@@ -1,126 +1,153 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title id="titleTag">Receipt Detail</title>
+    <link rel="stylesheet" href="../../main.css" />
+    <script src="./receiptDetail.js" type="module"></script>
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Document</title>
-  <link rel="stylesheet" href="../../main.css" />
-  <script src="./receiptDetail.js" type="module"></script>
-</head>
+  <body style="width: 100%; margin: 0px">
+    <div class="container d-block" id="bodyPage">
+      <a href="../receipt/receipt.html">กลับ</a>
+      <div class="card-content" style="margin-top: 24px">
+        <div class="card-header">ออกใบเสร็จรับเงิน</div>
+        <div style="margin-bottom: 14px">
+          <label for="">เลขที่เอกสาร:</label> <br />
+          <input type="text" name="" id="receiptId" disabled value="TXXXX" />
+          <br />
+          <label for=""> วันที่</label> <br />
+          <input type="date" name="" id="receiptDate" disabled />
+        </div>
 
-<body style="width: 100%; margin: 0px" >
-  <div class="container  d-block" id="bodyPage" >
-    <a href="../receipt/receipt.html">กลับ</a>
-    <div class="card-content" style="margin-top: 24px">
-      <div class="card-header">ออกใบเสร็จรับเงิน</div>
-      <div style="margin-bottom: 14px">
-        <label for="">เลขที่เอกสาร:</label> <br />
-        <input type="text" name="" id="receiptId" disabled value="TXXXX" />
-        <br />
-        <label for=""> วันที่</label> <br />
-        <input type="date" name="" id="receiptDate" disabled />
-      </div>
-
-      <table class="table" id="dataTable">
-        <caption></caption>
-        <thead>
-          <tr>
-            <th class="th" style="width: 50px">No.</th>
-            <th class="th" style="width: 700px">รหัสสินค้า</th>
-            <th class="th" style="width: 600px">ชื่อสินค้า</th>
-            <th class="th" style="width: 600px">หน่วย</th>
-            <th class="th" style="width: 400px">จำนวน</th>
-            <th class="th" style="width: 400px">ราคา</th>
-            <th class="th" style="width: 400px">ส่วนลด (%)</th>
-            <th class="th" style="width: 400px">ส่วนลด (บาท)</th>
-            <th class="th" style="width: 400px">รวมเงิน</th>
-          </tr>
-        </thead>
-        <tbody id="tableBody"></tbody>
-      </table>
-      <div class="j-end" style="margin-top: 14px">
-        <table>
+        <table class="table" id="dataTable">
           <caption></caption>
           <thead>
             <tr>
-              <th scope="col"></th>
-              <th scope="col"></th>
+              <th class="th" style="width: 50px">No.</th>
+              <th class="th" style="width: 700px">รหัสสินค้า</th>
+              <th class="th" style="width: 600px">ชื่อสินค้า</th>
+              <th class="th" style="width: 600px">หน่วย</th>
+              <th class="th" style="width: 400px">จำนวน</th>
+              <th class="th" style="width: 400px">ราคา</th>
+              <th class="th" style="width: 400px">ส่วนลด (%)</th>
+              <th class="th" style="width: 400px">ส่วนลด (บาท)</th>
+              <th class="th" style="width: 400px">รวมเงิน</th>
             </tr>
           </thead>
-          <tbody>
-            <tr>
-              <td class="t-start">ยอดรวมสินค้าก่อนลด</td>
-              <td>
-                <input type="text" name="" id="receiptTotalBeforeDiscount" value="0" disabled /><br />
-              </td>
-            </tr>
-            <tr>
-              <td class="t-start">ยอดรวมส่วนลดสินค้า</td>
-              <td>
-                <input type="text" name="" id="receiptTotalDiscount" value="0" disabled /><br />
-              </td>
-            </tr>
-            <tr>
-              <td class="t-start">Subtotal</td>
-              <td>
-                <input type="text" name="" id="receiptSubTotal" value="0" disabled /><br />
-              </td>
-            </tr>
-            <tr>
-              <td class="t-start">ส่วนลดการค้า</td>
-              <td><input type="text" name="" id="receiptTradeDiscount" value="0" disabled/><br /></td>
-            </tr>
-            <tr>
-              <td class="t-start">Grand total</td>
-              <td>
-                <input type="text" name="" id="receiptGrandTotal" value="0" disabled /><br />
-              </td>
-            </tr>
-          </tbody>
+          <tbody id="tableBody"></tbody>
         </table>
-      </div>
-    
-    </div>
-  </div>
-  <div id="dialogAddItemPos" class="modal">
-    <div class="modal-content">
-      <div class="model-header">
-        <span onclick="onDialogClose('dialogAddUnit')" class="close">&times;</span>
-        <p class="model-title">เลือกสินค้า</p>
-      </div>
-      <div class="model-body">
-        <div id="posItem"></div>
-        <hr />
-        <div id="itemSelect"></div>
-      </div>
-      <div class="model-footer">
-        <div>
-          <button onclick="onDialogCloseAndClear('unit','dialogAddUnit')">
-            close
-          </button>
-          <button onclick="addNewUnit()">select this item</button>
+        <div class="j-end" style="margin-top: 14px">
+          <table>
+            <caption></caption>
+            <thead>
+              <tr>
+                <th scope="col"></th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="t-start">ยอดรวมสินค้าก่อนลด</td>
+                <td>
+                  <input
+                    type="text"
+                    name=""
+                    id="receiptTotalBeforeDiscount"
+                    value="0"
+                    disabled
+                  /><br />
+                </td>
+              </tr>
+              <tr>
+                <td class="t-start">ยอดรวมส่วนลดสินค้า</td>
+                <td>
+                  <input
+                    type="text"
+                    name=""
+                    id="receiptTotalDiscount"
+                    value="0"
+                    disabled
+                  /><br />
+                </td>
+              </tr>
+              <tr>
+                <td class="t-start">Subtotal</td>
+                <td>
+                  <input
+                    type="text"
+                    name=""
+                    id="receiptSubTotal"
+                    value="0"
+                    disabled
+                  /><br />
+                </td>
+              </tr>
+              <tr>
+                <td class="t-start">ส่วนลดการค้า</td>
+                <td>
+                  <input
+                    type="text"
+                    name=""
+                    id="receiptTradeDiscount"
+                    value="0"
+                    disabled
+                  /><br />
+                </td>
+              </tr>
+              <tr>
+                <td class="t-start">Grand total</td>
+                <td>
+                  <input
+                    type="text"
+                    name=""
+                    id="receiptGrandTotal"
+                    value="0"
+                    disabled
+                  /><br />
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
-  </div>
+    <div id="dialogAddItemPos" class="modal">
+      <div class="modal-content">
+        <div class="model-header">
+          <span onclick="onDialogClose('dialogAddUnit')" class="close"
+            >&times;</span
+          >
+          <p class="model-title">เลือกสินค้า</p>
+        </div>
+        <div class="model-body">
+          <div id="posItem"></div>
+          <hr />
+          <div id="itemSelect"></div>
+        </div>
+        <div class="model-footer">
+          <div>
+            <button onclick="onDialogCloseAndClear('unit','dialogAddUnit')">
+              close
+            </button>
+            <button onclick="addNewUnit()">select this item</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
-  <template id="templateRowTable">
-    <td class="rowNumber th"></td>
-    <td class="th rowItemCode">
-    </td>
-    <td class="rowItemName th"></td>
-    <td class="rowItemUnit th"></td>
-    <td class="th rowItemQty">
-    </td>
-    <td class="rowItemPrice th"></td>
-    <td class="th rowItemDiscountPercent" >
-    </td>
-    <td class="th rowItemDiscount">
-    </td>
-    <td class="rowItemTotal th"></td>
-  </template>
-</body>
-
+    <template id="templateRowTable">
+      <td class="rowNumber th"></td>
+      <td class="th rowItemCode"></td>
+      <td class="rowItemName th"></td>
+      <td class="rowItemUnit th"></td>
+      <td class="th rowItemQty"></td>
+      <td class="rowItemPrice th"></td>
+      <td class="th rowItemDiscountPercent"></td>
+      <td class="th rowItemDiscount"></td>
+      <td class="rowItemTotal th"></td>
+    </template>
+  </body>
 </html>

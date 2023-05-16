@@ -1,0 +1,9 @@
+.selected {
+  color: rgb(0, 71, 224);
+}
+li {
+  margin: 8px 0px;
+}
+#itemSelect {
+  padding: 0px 16px;
+}

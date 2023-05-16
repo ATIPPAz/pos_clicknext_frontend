@@ -1,83 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../../main.css" />
+    <script src="./unit.js" type="module"></script>
+    <title>Unit Setting</title>
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="../../main.css" />
-  <script src="./unit.js" type="module"></script>
-  <title>Document</title>
-</head>
-
-<body style="width: 100%; margin: 0px">
-  <div class="d-block" id="bodyPage">
-    <div class="container">
-      <a href="../../index.html">กลับ</a>
-      <div class="card-content" style="margin-top: 24px">
-        <div class="card-header">ตั้งค่าหน่วยนับ</div>
-        <div class="j-end" style="margin-bottom: 14px">
-          <button onclick="openDialog('dialogAddUnit');">เพิ่ม</button>
-        </div>
-        <div class="table-border">
-          <table class="table" id="unitBody">
-            <caption></caption>
-            <thead>
-              <tr>
-                <th class="th" scope="no" style="width: 5%">No.</th>
-                <th class="th" scope="name" style="width: 89%">ชื่อ</th>
-                <th class="th" scope=" operation" style="width: 16%">
-                  ดำเนินการ
-                </th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
+  <body style="width: 100%; margin: 0px">
+    <div class="d-block" id="bodyPage">
+      <div class="container">
+        <a href="../../index.html">กลับ</a>
+        <div class="card-content" style="margin-top: 24px">
+          <div class="card-header">ตั้งค่าหน่วยนับ</div>
+          <div class="j-end" style="margin-bottom: 14px">
+            <button id="addButton">เพิ่ม</button>
+          </div>
+          <div class="table-border">
+            <table class="table" id="unitBody">
+              <caption></caption>
+              <thead>
+                <tr>
+                  <th class="th" scope="no" style="width: 5%">No.</th>
+                  <th class="th" scope="name" style="width: 89%">ชื่อ</th>
+                  <th class="th" scope=" operation" style="width: 16%">
+                    ดำเนินการ
+                  </th>
+                </tr>
+              </thead>
+              <tbody id="tableRow"></tbody>
+            </table>
+          </div>
         </div>
       </div>
-    </div>
-    <div id="dialogAddUnit" class="modal">
-      <div class="modal-content">
-        <div class="model-header">
-          <span onclick="onDialogClose('dialogAddUnit')" class="close">&times;</span>
-          <p class="model-title">เพิ่มจำนวนหน่วย</p>
-        </div>
-        <div class="model-body">
-          ชื่อหน่วย: <br />
-          <input type="text" id="unit" />
-        </div>
-        <div class="model-footer">
-          <div>
-            <button onclick="onDialogCloseAndClear('unit','dialogAddUnit')">
-              close
-            </button>
-            <button onclick="addNewUnit()">Save changes</button>
+      <div id="dialogUnit" class="modal">
+        <div class="modal-content">
+          <div class="model-header">
+            <span id="close" class="close">&times;</span>
+            <p class="model-title" id="titleDialog">เพิ่มจำนวนหน่วย</p>
+          </div>
+          <div class="model-body">
+            ชื่อหน่วย: <br />
+            <input type="text" id="unitName" />
+          </div>
+          <div class="model-footer">
+            <div>
+              <button id="closeDialog">close</button>
+              <button id="buttonSaveChange">Save changes</button>
+              <button id="buttonEditChange">Save changes</button>
+            </div>
           </div>
         </div>
       </div>
     </div>
-    <div id="dialogEditUnit" class="modal">
-      <div class="modal-content">
-        <div class="model-header">
-          <span onclick="onDialogClose('dialogEditUnit')" class="close">&times;</span>
-          <p class="model-title">เพิ่มจำนวนหน่วย</p>
-        </div>
-        <div class="model-body">
-          ชื่อหน่วย: <br />
-          <input type="text" id="unitEdit" />
-        </div>
-        <div class="model-footer">
-          <div>
-            <button onclick="onDialogCloseAndClear('unitEdit','dialogEditUnit')">
-              close
-            </button>
-            <button onclick="editNewUnit()">Save changes</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-</body>
-
+    <template id="templateRowTable">
+      <td class="rowNumber th"></td>
+      <td class="th rowUnitName"></td>
+      <td class="th">
+        <button class="editButton">แก้ไข</button>
+        <button class="deleteButton">ลบ</button>
+      </td>
+    </template>
+  </body>
 </html>

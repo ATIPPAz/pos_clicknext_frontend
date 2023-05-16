@@ -18,8 +18,8 @@ export async function getOneReceipt(id) {
   )
 }
 
-export async function createItem(data) {
-  return await createRequest(`${endpoint}${controller}/getItem`, data)
+export async function createReceipt(data) {
+  return await createRequest(`${endpoint}${controller}/createReceipt`, data)
 }
 export async function updateItem(data) {
   return await createRequest(`${endpoint}${controller}/updateItem`, data)

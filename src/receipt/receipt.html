@@ -1,68 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../../main.css" />
+    <link rel="stylesheet" href="./receipt.css" />
+    <script src="./receipt.js" type="module"></script>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="../../main.css" />
-  <link rel="stylesheet" href="./receipt.css" />
-  <script src="./receipt.js" type="module"></script>
+    <title>Receipt</title>
+  </head>
 
-  <title>Document</title>
-</head>
+  <body style="width: 100%; margin: 0px">
+    <div class="d-block" id="bodyPage">
+      <div class="container">
+        <a href="../../index.html">กลับ</a>
+        <div class="card-content" style="margin-top: 24px">
+          <div class="card-header">ดูใบเสร็จรับเงิน</div>
+          <div style="margin-bottom: 14px">
+            <label for="">วันที่เริ่มต้น:</label>
+            <input type="date" name="" id="startDate" />
+            <label for=""> วันสิ้นสุด:</label>
+            <input type="date" name="" id="endDate" />
+            <button id="searchButton">ค้นหา</button>
+          </div>
 
-<body style="width: 100%; margin: 0px">
-  <div class="d-block" id="bodyPage">
-    <div class="container">
-      <a href="../../index.html">กลับ</a>
-      <div class="card-content" style="margin-top: 24px">
-        <div class="card-header">ดูใบเสร็จรับเงิน</div>
-        <div style="margin-bottom: 14px">
-          <label for="">วันที่เริ่มต้น:</label>
-          <input type="date" name="" id="startDate" />
-          <label for=""> วันสิ้นสุด:</label>
-          <input type="date" name="" id="endDate" />
-          <button id="searchButton">ค้นหา</button>
+          <table class="table" id="receiptTable">
+            <caption></caption>
+            <thead>
+              <tr>
+                <th
+                  class="th"
+                  scope="no"
+                  style="width: 5%; padding: 4px; text-align: start"
+                >
+                  No.
+                </th>
+                <th class="th" style="width: 55%">เลขที่เอกสาร</th>
+                <th class="th" style="width: 20%">วันที่</th>
+                <th class="th" style="width: 10%">Grand Total</th>
+                <th class="th" style="width: 10%">ดำเนินการ</th>
+              </tr>
+            </thead>
+            <tbody id="receiptTbody"></tbody>
+          </table>
         </div>
-
-        <table class="table" id="receiptTable">
-          <caption></caption>
-          <thead>
-            <tr>
-              <th class="th" scope="no" style="width: 5%; padding: 4px; text-align: start">
-                No.
-              </th>
-              <th class="th" style="width: 55%">เลขที่เอกสาร</th>
-              <th class="th" style="width: 20%">วันที่</th>
-              <th class="th" style="width: 10%">Grand Total</th>
-              <th class="th" style="width: 10%">ดำเนินการ</th>
-            </tr>
-          </thead>
-          <tbody id="receiptTbody"></tbody>
-        </table>
       </div>
+      <template id="templateRowTable">
+        <td class="rowNumber th"></td>
+        <td class="rowReceiptCode th"></td>
+        <td class="rowReceiptDate th"></td>
+        <td class="rowReceiptGrandPrice th"></td>
+        <td class="th">
+          <button class="rowReceiptDetails" style="width: 100%">
+            ดูรายละเอียด
+          </button>
+        </td>
+      </template>
+      <template id="templateRowTable">
+        <td class="rowNumber th"></td>
+        <td class="rowReceiptCode th"></td>
+        <td class="rowReceiptDate th"></td>
+        <td class="rowReceiptGrandPrice th"></td>
+        <td class="th">
+          <button class="rowReceiptDetails" style="width: 100%">
+            ดูรายละเอียด
+          </button>
+        </td>
+      </template>
     </div>
-    <template id="templateRowTable">
-      <td class="rowNumber th"></td>
-      <td class="rowReceiptCode th"></td>
-      <td class="rowReceiptDate th"></td>
-      <td class="rowReceiptGrandPrice th"></td>
-      <td class="th">
-        <button class="rowReceiptDetails" style="width: 100%;">ดูรายละเอียด</button>
-      </td>
-    </template>
-    <template id="templateRowTable">
-      <td class="rowNumber th"></td>
-      <td class="rowReceiptCode th"></td>
-      <td class="rowReceiptDate th"></td>
-      <td class="rowReceiptGrandPrice th"></td>
-      <td class="th">
-        <button class="rowReceiptDetails" style="width: 100%;">ดูรายละเอียด</button>
-      </td>
-    </template>
-  </div>
-  <!-- <div id="loading" class="loader d-flex"></div> -->
-</body>
-
+  </body>
 </html>
