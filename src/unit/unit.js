@@ -1,10 +1,10 @@
-// import { onDialogCloseAndClear, addDataInTable } from '../../main.js'
-import { openDialog, onDialogClose } from '../../main.js'
 import { initLoader } from '../../plugins/loading.js'
+const body = document.getElementById('bodyPage')
+const loader = initLoader(body)
+import { openDialog, onDialogClose } from '../../main.js'
 import * as UnitApi from '../../plugins/api/unitApi.js'
 import { initToast } from '../../plugins/toast.js'
 const addButton = document.getElementById('addButton')
-const body = document.getElementById('bodyPage')
 const buttonSaveChange = document.getElementById('buttonSaveChange')
 const buttonEditChange = document.getElementById('buttonEditChange')
 const closeDialog = document.getElementById('closeDialog')
@@ -14,7 +14,6 @@ const tableBody = document.getElementById('tableRow')
 const _unitName = document.getElementById('unitName')
 const _title = document.getElementById('titleDialog')
 
-const loader = initLoader(body)
 const toast = initToast(body)
 
 const unitName = {

@@ -1,6 +1,8 @@
+import { initLoader } from '../../plugins/loading.js'
+const body = document.getElementById('bodyPage')
+const loader = initLoader(body)
 import * as ReceiptApi from '../../plugins/api/receiptApi.js'
 import { initToast } from '../../plugins/toast.js'
-import { initLoader } from '../../plugins/loading.js'
 
 const _receiptTotalBeforeDiscount = document.getElementById(
   'receiptTotalBeforeDiscount',
@@ -13,10 +15,8 @@ const _receiptSubTotal = document.getElementById('receiptSubTotal')
 const _receiptTradeDiscount = document.getElementById('receiptTradeDiscount')
 const _receiptGrandTotal = document.getElementById('receiptGrandTotal')
 const tableBody = document.getElementById('tableBody')
-const body = document.getElementById('bodyPage')
 const templateRowTable = document.getElementById('templateRowTable')
 
-const loader = initLoader(body)
 const Toast = initToast(body)
 const receiptTotalBeforeDiscount = {
   get value() {

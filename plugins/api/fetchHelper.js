@@ -1,6 +1,5 @@
 export async function getRequest(path) {
   const res = await fetch(path).then((e) => e.json())
-  console.log(res)
   return res
 }
 

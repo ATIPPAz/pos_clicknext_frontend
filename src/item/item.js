@@ -1,5 +1,8 @@
-import { openDialog, onDialogClose } from '../../main.js'
 import { initLoader } from '../../plugins/loading.js'
+const body = document.getElementById('bodyPage')
+const loader = initLoader(body)
+
+import { openDialog, onDialogClose } from '../../main.js'
 import { initToast } from '../../plugins/toast.js'
 
 import * as ItemApi from '../../plugins/api/itemApi.js'
@@ -14,9 +17,7 @@ const nameEdit = document.getElementById('itemName')
 const itemCodeEdit = document.getElementById('itemCode')
 const unitEdit = document.getElementById('itemDropdown')
 const title = document.getElementById('titleDialog')
-const body = document.getElementById('bodyPage')
 const openDialogButton = document.getElementById('opendialogbutton')
-const loader = initLoader(body)
 const buttonCloseDialog = document.getElementById('closeDialogButton')
 const Toast = initToast(body)
 let type = 'add'

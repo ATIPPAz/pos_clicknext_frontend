@@ -1,13 +1,13 @@
-import * as ReceiptApi from '../../plugins/api/receiptApi.js'
 import { initLoader } from '../../plugins/loading.js'
+const body = document.getElementById('bodyPage')
+const loader = initLoader(body)
+import * as ReceiptApi from '../../plugins/api/receiptApi.js'
 const _startDate = document.getElementById('startDate')
 const _endDate = document.getElementById('endDate')
 const tBody = document.getElementById('receiptTbody')
 const templateRowTable = document.getElementById('templateRowTable')
 const dataTable = document.getElementById('receiptTable')
 const searchButton = document.getElementById('searchButton')
-const body = document.getElementById('bodyPage')
-const loader = initLoader(body)
 const date = new Date()
 const dateTime = `${date.getFullYear()}-${
   (date.getMonth() + 1).toString().length > 1 ? '' : 0
