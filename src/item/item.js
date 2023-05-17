@@ -152,6 +152,8 @@ async function deleteItem(id) {
   loader.setLoadingOn()
   const { statusCode } = await ItemApi.deleteItem(id)
   if (statusCode === 204) {
+    Toast.success('สำเร็จ', 'ลบสำเร็จ')
+
     await loadTable()
   } else {
     Toast.error('ไม่สำเร็จ', 'เกิดข้อผิดพลาด')

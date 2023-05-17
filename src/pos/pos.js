@@ -126,10 +126,16 @@ function calculate() {
     )
     if (total.receiptTotalBeforDiscount.value <= 0) {
       total.receiptTradeDiscount.value = 0
+      total.receiptTotalBeforDiscount.value = 0
+      total.receiptTotalDiscount.value = 0
+      total.receiptSubTotal.value = 0
+      total.receiptTradeDiscount.value = 0
+      total.receiptGrandTotal.value = 0
       return
     }
     if (isNaN(parseFloat(total.receiptTradeDiscount.value))) {
       toast.error('เกิดข้อผิดพลาด', 'ข้อมูลที่กรอกไม่ถูกต้อง')
+
       total.receiptTradeDiscount.value = 0
       return
     }
@@ -275,32 +281,37 @@ async function createPos() {
         unitId: e.unitId,
       }
     })
-    const date = total.receiptDate.value.split('/')
-    const posPayload = {
-      receiptCode: receiptCode.value,
-      receiptDate: `${date[2]}-${date[1]}-${date[0]}`,
-      receiptTotalBeforeDiscount: total.receiptTotalBeforDiscount.value,
-      receiptTotalDiscount: total.receiptTotalDiscount.value,
-      receiptSubTotal: total.receiptSubTotal.value,
-      receiptTradeDiscount: total.receiptTradeDiscount.value,
-      receiptGrandTotal: total.receiptGrandTotal.value,
-      receiptdetails: details,
-    }
-    const { statusCode } = await PosApi.createReceipt(posPayload)
-    if (statusCode == 201) {
-      toast.success('สำเร็จ', 'ทำรายการสินค้าสำเร็จ')
-      itemSelectList = []
-      total.receiptTotalBeforDiscount.value = 0
-      total.receiptTotalDiscount.value = 0
-      total.receiptSubTotal.value = 0
-      total.receiptTradeDiscount.value = 0
-      total.receiptGrandTotal.value = 0
-      posBody.innerHTML = ''
-      counterIdx = 0
-      createTableRow(undefined)
-      counterIdx = 0
+    const id = details.findIndex((e) => e.itemQty <= 0)
+    if (id == -1) {
+      const date = total.receiptDate.value.split('/')
+      const posPayload = {
+        receiptCode: receiptCode.value,
+        receiptDate: `${date[2]}-${date[1]}-${date[0]}`,
+        receiptTotalBeforeDiscount: total.receiptTotalBeforDiscount.value,
+        receiptTotalDiscount: total.receiptTotalDiscount.value,
+        receiptSubTotal: total.receiptSubTotal.value,
+        receiptTradeDiscount: total.receiptTradeDiscount.value,
+        receiptGrandTotal: total.receiptGrandTotal.value,
+        receiptdetails: details,
+      }
+      const { statusCode } = await PosApi.createReceipt(posPayload)
+      if (statusCode == 201) {
+        toast.success('สำเร็จ', 'ทำรายการสินค้าสำเร็จ')
+        itemSelectList = []
+        total.receiptTotalBeforDiscount.value = 0
+        total.receiptTotalDiscount.value = 0
+        total.receiptSubTotal.value = 0
+        total.receiptTradeDiscount.value = 0
+        total.receiptGrandTotal.value = 0
+        posBody.innerHTML = ''
+        counterIdx = 0
+        createTableRow(undefined)
+        counterIdx = 0
+      } else {
+        toast.error('ไม่สำเร็จ', 'เกิดข้อผิดพลาด')
+      }
     } else {
-      toast.error('ไม่สำเร็จ', 'เกิดข้อผิดพลาด')
+      toast.error('ข้อมูลไม่สมบูรณ์', 'กรุณากรอกจำนวนสินค้าให้มากกว่า 0')
     }
   } else {
     toast.error('ไม่สามารถบันทึกได้', 'กรุณาเลือกสินค้าก่อน')
