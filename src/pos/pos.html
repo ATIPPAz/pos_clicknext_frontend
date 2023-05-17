@@ -13,7 +13,7 @@
   <body style="width: 100%; margin: 0px">
     <div class="d-block" id="bodyPage">
       <div class="container">
-        <a href="../../index.html">กลับ</a>
+        <a href="../../index.html" class="backBtn">กลับ</a>
         <div class="card-content" style="margin-top: 24px">
           <div class="card-header">ออกใบเสร็จรับเงิน</div>
           <div style="margin-bottom: 14px">
@@ -30,33 +30,27 @@
             <input type="text" name="" id="dateNow" disabled />
           </div>
 
-          <table class="table" id="dataTable">
+          <table class="table dataTable" id="dataTable">
             <caption></caption>
             <thead>
               <tr>
-                <th class="th" style="width: 50px">No.</th>
-                <th class="th" style="width: 700px">รหัสสินค้า</th>
-                <th class="th" style="width: 600px">ชื่อสินค้า</th>
-                <th class="th" style="width: 600px">หน่วย</th>
-                <th class="th" style="width: 400px">จำนวน</th>
-                <th class="th" style="width: 400px">ราคา</th>
-                <th class="th" style="width: 400px">ส่วนลด (%)</th>
-                <th class="th" style="width: 400px">ส่วนลด (บาท)</th>
-                <th class="th" style="width: 400px">รวมเงิน</th>
-                <th class="th" style="width: 400px">ดำเนินการ</th>
+                <th class="th" style="width: 5%">No.</th>
+                <th class="th" style="width: 30%">รหัสสินค้า</th>
+                <th class="th" style="width: 30%">ชื่อสินค้า</th>
+                <th class="th" style="width: 5%">หน่วย</th>
+                <th class="th" style="width: 5%">จำนวน</th>
+                <th class="th" style="width: 5%">ราคา</th>
+                <th class="th" style="width: 5%">ส่วนลด (%)</th>
+                <th class="th" style="width: 5%">ส่วนลด (บาท)</th>
+                <th class="th" style="width: 10%">รวมเงิน</th>
+                <th class="th" style="width: 10%">ดำเนินการ</th>
               </tr>
             </thead>
             <tbody id="posTable"></tbody>
           </table>
           <div class="j-end" style="margin-top: 14px">
-            <table>
+            <table style="width: fit-content">
               <caption></caption>
-              <thead>
-                <tr>
-                  <th scope="col"></th>
-                  <th scope="col"></th>
-                </tr>
-              </thead>
               <tbody>
                 <tr>
                   <td class="t-start">ยอดรวมสินค้าก่อนลด</td>
@@ -102,6 +96,7 @@
                       name=""
                       id="tradeDiscount"
                       value="0"
+                      min="0"
                     /><br />
                   </td>
                 </tr>
@@ -121,7 +116,7 @@
             </table>
           </div>
           <div style="margin-top: 14px" class="j-end">
-            <button id="savePos">บันทึก</button>
+            <button id="savePos" class="blue">บันทึก</button>
           </div>
         </div>
       </div>
@@ -141,9 +136,8 @@
           </div>
           <div class="model-footer">
             <div>
-              <button id="closeDialogButton">close</button>
-              <button id="addItem">select this item</button>
-              <button id="editItemPos">select this item</button>
+              <button id="closeDialogButton" class="gray">close</button>
+              <button id="selectItem" class="blue">select this item</button>
             </div>
           </div>
         </div>
@@ -153,8 +147,10 @@
     <template id="itemRow">
       <td class="rowNumber th"></td>
       <td class="th">
-        <button class="addNewItem" style="width: 100%">เลือกสินค้า</button>
-        <button class="changeNewItem" style="width: 100%">แก้ไขสินค้า</button>
+        <button class="addNewItem blue" style="width: 100%">เลือกสินค้า</button>
+        <button class="changeNewItem gray" style="width: 100%">
+          แก้ไขสินค้า
+        </button>
       </td>
       <td class="rowItemName th"></td>
       <td class="rowItemUnit th"></td>
@@ -169,6 +165,7 @@
           name=""
           id=""
           value="0"
+          max="100"
           min="0"
           disabled
         />
@@ -178,7 +175,9 @@
       </td>
       <td class="rowItemTotal th">0</td>
       <td class="th">
-        <button class="deleteButton" style="width: 100%" disabled>ลบ</button>
+        <button class="deleteButton red" style="width: 100%" disabled>
+          ลบ
+        </button>
       </td>
     </template>
 

@@ -61,12 +61,10 @@ export function initModalSelectitem(elementDialog, itemList) {
     posItem.appendChild(li)
     liList.push(li)
   })
-  const editItemPos = element.querySelector('#editItemPos')
-  const addNewItemBtn = element.querySelector('#addItem')
+  const selectItem = element.querySelector('#selectItem')
   const closeDialogBtn = element.querySelector('#closeDialogButton')
   closeDialogBtn.addEventListener('click', () => closeModel(undefined))
-  editItemPos.addEventListener('click', () => closeModel(itemIdSelect))
-  addNewItemBtn.addEventListener('click', () => closeModel(itemIdSelect))
+  selectItem.addEventListener('click', () => closeModel(itemIdSelect))
   close.addEventListener('click', () => closeModel(undefined))
   function selectedItem(li) {
     if (!!li.dataset.selected) {
@@ -99,8 +97,6 @@ export function initModalSelectitem(elementDialog, itemList) {
         li.classList.remove('selected')
       })
       if (itemId != null) {
-        editItemPos.style.display = 'inline-block'
-        addNewItemBtn.style.display = 'none'
         liList.forEach((li) => {
           if (li.dataset.itemCode == itemId) {
             li.classList.add('selected')
@@ -117,8 +113,6 @@ export function initModalSelectitem(elementDialog, itemList) {
         })
       } else {
         itemIdSelect = -1
-        addNewItemBtn.style.display = 'inline-block'
-        editItemPos.style.display = 'none'
       }
 
       element.style.display = 'block'

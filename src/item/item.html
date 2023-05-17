@@ -14,14 +14,14 @@
   <body style="width: 100%; margin: 0px">
     <div class="d-block" id="bodyPage">
       <div class="container">
-        <a href="../../index.html">กลับ</a>
+        <a href="../../index.html" class="backBtn">กลับ</a>
         <div class="card-content" style="margin-top: 24px">
           <div class="card-header">ตั้งค่าสินค้า</div>
           <div class="j-end" style="margin-bottom: 14px">
-            <button id="opendialogbutton">เพิ่ม</button>
+            <button id="opendialogbutton" class="blue">เพิ่ม</button>
           </div>
           <div class="table-border">
-            <table class="table" id="itemTable">
+            <table class="table dataTable" id="itemTable">
               <caption></caption>
               <thead>
                 <tr class="tr">
@@ -73,9 +73,9 @@
           </div>
           <div class="model-footer">
             <div>
-              <button class="closeDialogButton">close</button>
-              <button id="add">Save changes</button>
-              <button id="edit">Save changes</button>
+              <button class="closeDialogButton gray">close</button>
+              <button id="add" class="blue">Save changes</button>
+              <button id="edit" class="blue">Save changes</button>
             </div>
           </div>
         </div>
@@ -89,9 +89,25 @@
       <td class="rowItemUnit th"></td>
       <td class="rowItemPrice th"></td>
       <td class="th">
-        <button class="editButton" style="width: 46%">แก้ไข</button>
-        <button class="deleteButton" style="width: 46%">ลบ</button>
+        <button class="editButton yellow" style="width: 46%">แก้ไข</button>
+        <button class="deleteButton red" style="width: 46%">ลบ</button>
       </td>
+    </template>
+    <template id="templateNoData">
+      <tr>
+        <th colspan="6">
+          <div
+            style="
+              font-size: 48px;
+              font-weight: bold;
+              margin: auto;
+              color: #adadad;
+            "
+          >
+            No data
+          </div>
+        </th>
+      </tr>
     </template>
   </body>
 </html>

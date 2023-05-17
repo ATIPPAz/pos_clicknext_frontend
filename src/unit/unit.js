@@ -13,6 +13,7 @@ const templateRowTable = document.getElementById('templateRowTable')
 const tableBody = document.getElementById('tableRow')
 const _unitName = document.getElementById('unitName')
 const _title = document.getElementById('titleDialog')
+const templateNoData = document.getElementById('templateNoData')
 
 const toast = initToast(body)
 
@@ -31,11 +32,11 @@ const setDialog = {
   },
   set value(x) {
     if (x == 'add') {
-      _title.textContent = 'เพิ่มสินค้า'
+      _title.textContent = 'เพิ่มหน่วยนับ'
       buttonSaveChange.style.display = 'inline-block'
       buttonEditChange.style.display = 'none'
     } else {
-      _title.textContent = 'แก้ไขสินค้า'
+      _title.textContent = 'แก้ไขหน่วยนับ'
       buttonSaveChange.style.display = 'none'
       buttonEditChange.style.display = 'inline-block'
     }
@@ -77,13 +78,14 @@ async function deleteUnit(id) {
     toast.success('ลบสำเร็จ', 'ลบหน่วยนับสำเร็จ')
     await loadTable()
   } else {
-    toast.success('ไม่สำเร็จ', 'เกิดข้อผิดพลาด')
+    toast.error('ไม่สำเร็จ', 'เกิดข้อผิดพลาด')
   }
   loader.setLoadingOff()
 }
 async function getData() {
   const { statusCode, data } = await UnitApi.getUnit()
   if (statusCode === 200) {
+    if (data.length <= 0) return []
     return data.map((e) => {
       return {
         unitId: e.unitId,
@@ -131,10 +133,15 @@ async function loadTable() {
   loader.setLoadingOn()
   tableBody.innerHTML = ''
   const unitItems = await getData()
-  unitItems.forEach((unit, idx) => {
-    const row = createRow(idx + 1)
-    assignValue(row, unit)
-  })
+  if (unitItems.length > 0) {
+    unitItems.forEach((unit, idx) => {
+      const row = createRow(idx + 1)
+      assignValue(row, unit)
+    })
+  } else {
+    loadNodata()
+  }
+
   loader.setLoadingOff()
 }
 async function onMounted() {
@@ -168,5 +175,9 @@ function createRow(id) {
   rowNumber.textContent = id
   tableBody.appendChild(tr)
   return tr
+}
+function loadNodata() {
+  const clone = templateNoData.content.cloneNode(true)
+  tableBody.appendChild(clone)
 }
 onMounted()

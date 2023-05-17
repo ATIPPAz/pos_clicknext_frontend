@@ -7,7 +7,7 @@ import { initToast } from '../../plugins/toast.js'
 
 import * as ItemApi from '../../plugins/api/itemApi.js'
 import * as UnitApi from '../../plugins/api/unitApi.js'
-
+const templateNoData = document.getElementById('templateNoData')
 const buttonSaveChange = document.getElementById('add')
 const buttonEditChange = document.getElementById('edit')
 const templateRowTable = document.getElementById('tableRow')
@@ -233,31 +233,35 @@ function setDropdownOption(itemUnit, defaultValue) {
 async function loadTable() {
   tableBody.innerHTML = ''
   const items = await getItemData()
-  for (let index = 0; index < items.length; index++) {
-    const item = items[index]
-    const tr = document.createElement('tr')
-    const clone = templateRowTable.content.cloneNode(true)
-    tr.dataset.itemId = item.itemId
-    tr.dataset.rowItemCode = item.itemCode
-    tr.dataset.rowItemName = item.itemName
-    tr.dataset.rowItemUnit = item.unitId
-    tr.dataset.rowItemPrice = item.itemPrice
-    tr.appendChild(clone)
-    const rowNumber = tr.querySelector('.rowNumber')
-    const rowItemCode = tr.querySelector('.rowItemCode')
-    const rowItemName = tr.querySelector('.rowItemName')
-    const rowItemUnit = tr.querySelector('.rowItemUnit')
-    const rowItemPrice = tr.querySelector('.rowItemPrice')
-    const editButton = tr.querySelector('.editButton')
-    const deleteButton = tr.querySelector('.deleteButton')
-    editButton.addEventListener('click', () => changeItem(tr))
-    deleteButton.addEventListener('click', () => deleteItem(item.itemId))
-    rowNumber.textContent = index + 1
-    rowItemCode.textContent = item.itemCode
-    rowItemName.textContent = item.itemName
-    rowItemUnit.textContent = item.unitName
-    rowItemPrice.textContent = item.itemPrice
-    tableBody.appendChild(tr)
+  if (items.length > 0) {
+    for (let index = 0; index < items.length; index++) {
+      const item = items[index]
+      const tr = document.createElement('tr')
+      const clone = templateRowTable.content.cloneNode(true)
+      tr.dataset.itemId = item.itemId
+      tr.dataset.rowItemCode = item.itemCode
+      tr.dataset.rowItemName = item.itemName
+      tr.dataset.rowItemUnit = item.unitId
+      tr.dataset.rowItemPrice = item.itemPrice
+      tr.appendChild(clone)
+      const rowNumber = tr.querySelector('.rowNumber')
+      const rowItemCode = tr.querySelector('.rowItemCode')
+      const rowItemName = tr.querySelector('.rowItemName')
+      const rowItemUnit = tr.querySelector('.rowItemUnit')
+      const rowItemPrice = tr.querySelector('.rowItemPrice')
+      const editButton = tr.querySelector('.editButton')
+      const deleteButton = tr.querySelector('.deleteButton')
+      editButton.addEventListener('click', () => changeItem(tr))
+      deleteButton.addEventListener('click', () => deleteItem(item.itemId))
+      rowNumber.textContent = index + 1
+      rowItemCode.textContent = item.itemCode
+      rowItemName.textContent = item.itemName
+      rowItemUnit.textContent = item.unitName
+      rowItemPrice.textContent = item.itemPrice
+      tableBody.appendChild(tr)
+    }
+  } else {
+    loadNoData()
   }
 }
 async function onPageLoad() {
@@ -271,5 +275,8 @@ async function onPageLoad() {
   await loadTable()
   loader.setLoadingOff()
 }
-
+function loadNoData() {
+  const clone = templateNoData.content.cloneNode(true)
+  tableBody.appendChild(clone)
+}
 onPageLoad()

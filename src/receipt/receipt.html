@@ -5,7 +5,6 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="../../main.css" />
-    <link rel="stylesheet" href="./receipt.css" />
     <script src="./receipt.js" type="module"></script>
 
     <title>Receipt</title>
@@ -14,7 +13,7 @@
   <body style="width: 100%; margin: 0px">
     <div class="d-block" id="bodyPage">
       <div class="container">
-        <a href="../../index.html">กลับ</a>
+        <a href="../../index.html" class="backBtn">กลับ</a>
         <div class="card-content" style="margin-top: 24px">
           <div class="card-header">ดูใบเสร็จรับเงิน</div>
           <div style="margin-bottom: 14px">
@@ -22,10 +21,10 @@
             <input type="date" name="" id="startDate" />
             <label for=""> วันสิ้นสุด:</label>
             <input type="date" name="" id="endDate" />
-            <button id="searchButton">ค้นหา</button>
+            <button id="searchButton" class="blue">ค้นหา</button>
           </div>
 
-          <table class="table" id="receiptTable">
+          <table class="table dataTable" id="receiptTable">
             <caption></caption>
             <thead>
               <tr>
@@ -52,21 +51,26 @@
         <td class="rowReceiptDate th"></td>
         <td class="rowReceiptGrandPrice th"></td>
         <td class="th">
-          <button class="rowReceiptDetails" style="width: 100%">
+          <button class="rowReceiptDetails blue" style="width: 100%">
             ดูรายละเอียด
           </button>
         </td>
       </template>
-      <template id="templateRowTable">
-        <td class="rowNumber th"></td>
-        <td class="rowReceiptCode th"></td>
-        <td class="rowReceiptDate th"></td>
-        <td class="rowReceiptGrandPrice th"></td>
-        <td class="th">
-          <button class="rowReceiptDetails" style="width: 100%">
-            ดูรายละเอียด
-          </button>
-        </td>
+      <template id="templateNoData">
+        <tr>
+          <th colspan="5">
+            <div
+              style="
+                font-size: 48px;
+                font-weight: bold;
+                margin: auto;
+                color: #adadad;
+              "
+            >
+              No data
+            </div>
+          </th>
+        </tr>
       </template>
     </div>
   </body>

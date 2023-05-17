@@ -124,6 +124,15 @@ function calculate() {
       (cur, next) => cur + next.itemDiscount,
       0,
     )
+    if (total.receiptTotalBeforDiscount.value <= 0) {
+      total.receiptTradeDiscount.value = 0
+      return
+    }
+    if (isNaN(parseFloat(total.receiptTradeDiscount.value))) {
+      toast.error('เกิดข้อผิดพลาด', 'ข้อมูลที่กรอกไม่ถูกต้อง')
+      total.receiptTradeDiscount.value = 0
+      return
+    }
     total.receiptSubTotal.value =
       parseFloat(total.receiptTotalBeforDiscount.value) -
       parseFloat(total.receiptTotalDiscount.value)
@@ -131,6 +140,8 @@ function calculate() {
       parseFloat(total.receiptSubTotal.value) -
       parseFloat(total.receiptTradeDiscount.value)
   } else {
+    toast.error('ไม่พบข้อมูลสินค้า', 'กรุณาเลือกข้อมูลสินค้าก่อน')
+
     total.receiptTotalBeforDiscount.value = 0
     total.receiptTotalDiscount.value = 0
     total.receiptSubTotal.value = 0
@@ -173,13 +184,32 @@ function calRow(tr) {
     (e) => e.counterIdx == tr.dataset.counterIdx,
   )
   itemSelectList[id].itemQty = parseFloat(rowItemQty.value)
+  console.log(rowItemQty.value)
+  console.log(itemSelectList[id].itemQty)
+  if (itemSelectList[id].itemQty < 0 || isNaN(itemSelectList[id].itemQty)) {
+    toast.error('ข้อมูลไม่ถูกต้อง', 'ค่าที่ใส่มาห้ามน้อยกว่า0')
+    rowItemQty.value = 0
+    itemSelectList[id].itemQty = 0
+    return
+  }
+
   const price = parseFloat(rowItemPrice.textContent)
+  const total = price * itemSelectList[id].itemQty
   itemSelectList[id].itemDiscountPercent = parseFloat(
     rowItemDiscountPercent.value,
   )
-  const total = price * itemSelectList[id].itemQty
+  if (
+    itemSelectList[id].itemDiscountPercent < 0 ||
+    isNaN(itemSelectList[id].itemDiscountPercent)
+  ) {
+    toast.error('ข้อมูลไม่ถูกต้อง', 'ค่าที่ใส่มาห้ามน้อยกว่า0')
+    rowItemDiscountPercent.value = 0
+    itemSelectList[id].itemDiscountPercent = 0
+    return
+  }
   itemSelectList[id].itemDiscount =
     total * (itemSelectList[id].itemDiscountPercent / 100)
+
   itemSelectList[id].itemAmount = total - itemSelectList[id].itemDiscount
   rowItemDiscount.textContent = itemSelectList[id].itemDiscount
   rowItemTotal.textContent = itemSelectList[id].itemAmount
@@ -222,6 +252,9 @@ function createTableRow(id) {
     tr.dataset.counterIdx = id
     deleteButton.addEventListener('click', () => deleteRow(id))
   } else {
+    const deleteButton = tr.querySelector('.deleteButton')
+    deleteButton.classList.remove('red')
+    deleteButton.style.cursor = 'not-allowed'
     tr.dataset.counterIdx = 'createNewRow'
     changeNewItemButton.style.display = 'none'
   }
