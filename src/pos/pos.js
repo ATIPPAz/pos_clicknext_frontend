@@ -78,10 +78,9 @@ async function loadItem() {
   const { statusCode, data } = await ItemApi.getItem()
   if (statusCode == 200) {
     return data
-  } else {
-    toast.error('เกิดข้อผิดพลาด', 'ไม่สามารถโหลดข้อมูลไอเทมได้')
-    return []
   }
+  toast.error('เกิดข้อผิดพลาด', 'ไม่สามารถโหลดข้อมูลไอเทมได้')
+  return []
 }
 
 function createRowPos() {
@@ -95,7 +94,6 @@ function createRowPos() {
     if (id) {
       const data = itemList.find((e) => e.itemId == +id)
       const rowData = createTableRow(data)
-      console.log(rowData)
       itemSelectList.push(rowData)
     }
   })
@@ -196,7 +194,6 @@ function createTableRow(data) {
   row.appendChild(clone)
   const tr = dataTable.insertRow(dataTable.rows.length - 1)
   tr.innerHTML = row.innerHTML
-
   const rowNumber = tr.querySelector('.rowNumber')
   const rowItemName = tr.querySelector('.rowItemName')
   const rowItemUnit = tr.querySelector('.rowItemUnit')
@@ -207,6 +204,7 @@ function createTableRow(data) {
   const rowItemTotal = tr.querySelector('.rowItemTotal')
   const changeNewItem = tr.querySelector('.changeNewItem')
   const deleteButton = tr.querySelector('.deleteButton')
+
   rowItemQty.addEventListener(
     'change',
     function (e) {
@@ -238,7 +236,8 @@ function createTableRow(data) {
     false,
   )
   changeNewItem.addEventListener('click', async () => {
-    const idBeforeChange = data.itemId
+    const idEdit = itemSelectList.findIndex((e) => e.index == tr.dataset.index)
+    const idBeforeChange = itemSelectList[idEdit].itemId
     const idAfterChange = await modal.openModal(idBeforeChange)
     if (idBeforeChange != idAfterChange && idAfterChange) {
       const data = itemList.find((e) => e.itemId == idAfterChange)
@@ -256,9 +255,6 @@ function createTableRow(data) {
         itemAmount: 0,
       }
 
-      const idEdit = itemSelectList.findIndex(
-        (e) => e.index == tr.dataset.index,
-      )
       rowItemName.textContent = rowData.itemName
       rowItemUnit.textContent = rowData.unitName
       rowItemQty.value = rowData.itemQty
@@ -271,7 +267,6 @@ function createTableRow(data) {
       calculate()
     }
   })
-
   deleteButton.addEventListener('click', () => {
     let index = itemSelectList.findIndex((e) => e.index === tr.dataset.index)
     itemSelectList.splice(index, 1)
@@ -289,7 +284,6 @@ function createTableRow(data) {
     ).textContent = index + 1
     calculate()
   })
-
   tr.dataset.index = posBody.children.length - 1
   changeNewItem.textContent = data.itemCode
   rowNumber.textContent = posBody.children.length - 1
@@ -300,7 +294,6 @@ function createTableRow(data) {
   rowItemDiscountPercent.textContent = data.itemDiscountPercent
   rowItemDiscount.textContent = 0
   rowItemTotal.textContent = 0
-
   const rowData = {
     itemId: data.itemId,
     itemName: data.itemName,
