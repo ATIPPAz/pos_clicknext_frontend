@@ -123,21 +123,21 @@
       <div id="dialogAddItemPos" class="modal" style="padding-top: 20px">
         <div class="modal-content" style="width: 400px">
           <div class="model-header">
-            <span id="close" class="close">&times;</span>
+            <span class="close">&times;</span>
             <p class="model-title">เลือกสินค้า</p>
           </div>
           <div class="model-body">
-            <ul id="posItem" style="overflow-y: auto; height: 150px"></ul>
+            <ul class="itemList" style="overflow-y: auto; height: 150px"></ul>
             <hr />
-            <div id="itemSelect">
-              <div id="itemSelect-title">No Item Selected</div>
-              <div id="itemSelect-content"></div>
+            <div class="itemSelect">
+              <div class="itemSelect-title">No Item Selected</div>
+              <div class="itemSelect-content"></div>
             </div>
           </div>
           <div class="model-footer">
             <div>
-              <button id="closeDialogButton" class="gray">close</button>
-              <button id="selectItem" class="blue">select this item</button>
+              <button class="closeDialogButton gray">close</button>
+              <button class="selectItem blue">select this item</button>
             </div>
           </div>
         </div>
@@ -147,10 +147,37 @@
     <template id="itemRow">
       <td class="rowNumber th"></td>
       <td class="th">
-        <button class="addNewItem blue" style="width: 100%">เลือกสินค้า</button>
         <button class="changeNewItem gray" style="width: 100%">
           แก้ไขสินค้า
         </button>
+      </td>
+      <td class="rowItemName th"></td>
+      <td class="rowItemUnit th"></td>
+      <td class="th">
+        <input class="rowItemQty" type="number" value="0" min="0" />
+      </td>
+      <td class="rowItemPrice th">0</td>
+      <td class="th">
+        <input
+          class="rowItemDiscountPercent"
+          type="number"
+          name=""
+          id=""
+          value="0"
+          max="100"
+          min="0"
+        />
+      </td>
+      <td class="th rowItemDiscount">0</td>
+      <td class="rowItemTotal th">0</td>
+      <td class="th">
+        <button class="deleteButton red" style="width: 100%">ลบ</button>
+      </td>
+    </template>
+    <template id="rowCreate">
+      <td class="rowNumber th">1</td>
+      <td class="th">
+        <button class="addNewItem blue" style="width: 100%">เลือกสินค้า</button>
       </td>
       <td class="rowItemName th"></td>
       <td class="rowItemUnit th"></td>
@@ -175,7 +202,11 @@
       </td>
       <td class="rowItemTotal th">0</td>
       <td class="th">
-        <button class="deleteButton red" style="width: 100%" disabled>
+        <button
+          class="deleteButton"
+          style="width: 100%; cursor: not-allowed"
+          disabled
+        >
           ลบ
         </button>
       </td>

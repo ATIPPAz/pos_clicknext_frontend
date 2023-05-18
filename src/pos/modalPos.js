@@ -1,34 +1,20 @@
-export function initModalSelectitem(elementDialog, itemList) {
-  const _itemSelectContent = document.getElementById('itemSelect-content')
-  const _itemSelectTitle = document.getElementById('itemSelect-title')
-  const close = document.getElementById('close')
+export function initModalSelectItem(elementDialog, itemList) {
+  const _itemSelectContent = elementDialog.querySelector('.itemSelect-content')
+  const _itemSelectTitle = elementDialog.querySelector('.itemSelect-title')
+  const close = elementDialog.querySelector('.close')
   let _resolve
-  let itemIdSelect = undefined
-  let _itemSelect = undefined
+
+  let selectedItemIndex = undefined
 
   const liList = []
+
   const itemSelect = {
     get value() {
-      return _itemSelect
+      return itemList[selectedItemIndex]
     },
     set value(x) {
-      if (x) {
-        itemSelectTitle.value = true
-        _itemSelectContent.innerHTML = `
-        <b>รหัสสินค้า</b> <br>
-        ${x.itemCode}<br>
-        <br>
-        <b>ชื่อสินค้า</b> <br>
-        ${x.itemName}<br>
-        <br>
-        <b>ราคา</b> <br>
-        ${x.itemPrice}<br>
-        <br>`
-      } else {
-        itemSelectTitle.value = false
-        _itemSelectContent.innerHTML = ``
-      }
-      _itemSelect = x
+      const find = itemList.findIndex((e) => e.itemId == x)
+      selectedItemIndex = find >= 0 ? find : undefined
     },
   }
   const itemSelectTitle = {
@@ -44,10 +30,10 @@ export function initModalSelectitem(elementDialog, itemList) {
     },
   }
   const element = elementDialog
-  const posItem = element.querySelector('#posItem')
-  itemList.forEach((item, id) => {
+  const posItem = element.querySelector('.itemList')
+  itemList.forEach((item, index) => {
     const li = document.createElement('li')
-    li.dataset.keySelecter = id
+    li.dataset.index = index
     li.style.cursor = 'pointer'
     li.dataset.selected = false
     li.dataset.itemId = item.itemId
@@ -61,11 +47,36 @@ export function initModalSelectitem(elementDialog, itemList) {
     posItem.appendChild(li)
     liList.push(li)
   })
-  const selectItem = element.querySelector('#selectItem')
-  const closeDialogBtn = element.querySelector('#closeDialogButton')
-  closeDialogBtn.addEventListener('click', () => closeModel(undefined))
-  selectItem.addEventListener('click', () => closeModel(itemIdSelect))
-  close.addEventListener('click', () => closeModel(undefined))
+  const selectItem = element.querySelector('.selectItem')
+  const closeDialogBtn = element.querySelector('.closeDialogButton')
+  closeDialogBtn.addEventListener('click', () => {
+    selectedItemIndex = undefined
+    closeModel()
+  })
+  selectItem.addEventListener('click', () => closeModel())
+  close.addEventListener('click', () => {
+    selectedItemIndex = undefined
+    closeModel()
+  })
+  function setCurrentItem() {
+    console.log(itemSelect.value)
+    if (!!itemSelect.value) {
+      itemSelectTitle.value = true
+      _itemSelectContent.innerHTML = `
+          <b>รหัสสินค้า</b> <br>
+          ${itemSelect.value.itemCode}<br>
+          <br>
+          <b>ชื่อสินค้า</b> <br>
+          ${itemSelect.value.itemName}<br>
+          <br>
+          <b>ราคา</b> <br>
+          ${itemSelect.value.itemPrice}<br>
+          <br>`
+    } else {
+      itemSelectTitle.value = false
+      _itemSelectContent.innerHTML = ``
+    }
+  }
   function selectedItem(li) {
     if (!!li.dataset.selected) {
       const liList = posItem.querySelectorAll('li')
@@ -73,47 +84,36 @@ export function initModalSelectitem(elementDialog, itemList) {
         e.classList.remove('selected')
         e.dataset.selected = false
       })
+      console.log(li.dataset)
       li.classList.add('selected')
       li.dataset.selected = true
-      itemIdSelect = li.dataset.itemCode
-      itemSelect.value = {
-        itemId: li.dataset.itemId,
-        itemCode: li.dataset.itemCode,
-        itemName: li.dataset.itemName,
-        itemPrice: li.dataset.itemPrice,
-        unitName: li.dataset.unitName,
-        unitId: li.dataset.unitId,
-      }
+      selectedItemIndex = +li.dataset.index
+      setCurrentItem()
     }
   }
-  function closeModel(data) {
+  function closeModel() {
     element.style.display = 'none'
-    _resolve(data)
-    itemSelect.value = undefined
+    _resolve(itemSelect.value?.itemId)
+    selectedItemIndex = undefined
   }
   return {
-    openModal(itemId) {
+    openModal(itemId = null) {
       liList.forEach((li) => {
         li.classList.remove('selected')
       })
       if (itemId != null) {
-        liList.forEach((li) => {
-          if (li.dataset.itemCode == itemId) {
-            li.classList.add('selected')
-            itemIdSelect = li.dataset.itemCode
-            itemSelect.value = {
-              itemId: li.dataset.itemId,
-              itemCode: li.dataset.itemCode,
-              itemName: li.dataset.itemName,
-              itemPrice: li.dataset.itemPrice,
-              unitName: li.dataset.unitName,
-              unitId: li.dataset.unitId,
-            }
-          }
-        })
+        const index = liList.findIndex((e) => e.dataset.itemId == itemId)
+        if (index >= 0) {
+          const li = liList[index]
+          console.log(li)
+          li.classList.add('selected')
+          selectedItemIndex = index
+        }
       } else {
-        itemIdSelect = -1
+        selectedItemIndex = undefined
       }
+      setCurrentItem()
+      console.log(selectedItemIndex)
 
       element.style.display = 'block'
       return new Promise((resolve) => {

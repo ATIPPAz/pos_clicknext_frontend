@@ -43,12 +43,12 @@ const setDialog = {
   },
 }
 
-let idSelect = null
-async function editNewUnit() {
+let currentUnitId = null
+async function editUnit() {
   loader.setLoadingOn()
   if (unitName.value != '') {
     const { statusCode } = await UnitApi.updateUnit({
-      unitId: +idSelect,
+      unitId: +currentUnitId,
       unitName: unitName.value,
     })
     if (statusCode != 204) {
@@ -65,23 +65,7 @@ async function editNewUnit() {
   loader.setLoadingOff()
 }
 
-function changeUnit(id, name) {
-  setDialog.value = 'edit'
-  unitName.value = name
-  idSelect = id
-  openDialog('dialogUnit')
-}
-async function deleteUnit(id) {
-  loader.setLoadingOn()
-  const { statusCode } = await UnitApi.deleteUnit(id)
-  if (statusCode == 204) {
-    toast.success('ลบสำเร็จ', 'ลบหน่วยนับสำเร็จ')
-    await loadTable()
-  } else {
-    toast.error('ไม่สำเร็จ', 'เกิดข้อผิดพลาด')
-  }
-  loader.setLoadingOff()
-}
+async function deleteUnit(id) {}
 async function getData() {
   const { statusCode, data } = await UnitApi.getUnit()
   if (statusCode === 200) {
@@ -134,9 +118,10 @@ async function loadTable() {
   tableBody.innerHTML = ''
   const unitItems = await getData()
   if (unitItems.length > 0) {
-    unitItems.forEach((unit, idx) => {
-      const row = createRow(idx + 1)
-      assignValue(row, unit)
+    unitItems.forEach((unit, index) => {
+      const row = createRow(index, unit)
+      tableBody.appendChild(row)
+      // assignValue(row, unit)
     })
   } else {
     loadNodata()
@@ -144,40 +129,50 @@ async function loadTable() {
 
   loader.setLoadingOff()
 }
-async function onMounted() {
-  closeDialog.addEventListener('click', () => closeDialogUnit())
-  close.addEventListener('click', () => closeDialogUnit())
-  addButton.addEventListener('click', () => openAddUnitDialog())
-  buttonSaveChange.addEventListener('click', () => addNewUnit())
-  buttonEditChange.addEventListener('click', () => editNewUnit())
-  await loadTable()
-}
-function assignValue(tr, item) {
+
+function assignValue(tr, item) {}
+function createRow(index, item) {
+  const tr = document.createElement('tr')
+  const clone = templateRowTable.content.cloneNode(true)
+  // tr.dataset.counterIdx = index
+  tr.appendChild(clone)
+  const rowNumber = tr.querySelector('.rowNumber')
+  rowNumber.textContent = index + 1
   const rowUnitName = tr.querySelector('.rowUnitName')
   const editButton = tr.querySelector('.editButton')
   const deleteButton = tr.querySelector('.deleteButton')
-
-  tr.dataset.rowUnitName = item.unitName
-  tr.dataset.unitId = item.unitId
+  // tr.dataset.rowUnitName = item.unitName
+  // tr.dataset.unitId = item.unitId
   rowUnitName.textContent = item.unitName
-  editButton.addEventListener('click', () =>
-    changeUnit(item.unitId, item.unitName),
-  )
-  deleteButton.addEventListener('click', () => deleteUnit(item.unitId))
-}
-function createRow(id) {
-  const tr = document.createElement('tr')
-  const clone = templateRowTable.content.cloneNode(true)
-
-  tr.dataset.counterIdx = id
-  tr.appendChild(clone)
-  const rowNumber = tr.querySelector('.rowNumber')
-  rowNumber.textContent = id
-  tableBody.appendChild(tr)
+  editButton.addEventListener('click', () => {
+    setDialog.value = 'edit'
+    unitName.value = item.unitName
+    currentUnitId = item.unitId
+    openDialog('dialogUnit')
+  })
+  deleteButton.addEventListener('click', async () => {
+    loader.setLoadingOn()
+    const { statusCode } = await UnitApi.deleteUnit(item.unitId)
+    if (statusCode == 204) {
+      toast.success('ลบสำเร็จ', 'ลบหน่วยนับสำเร็จ')
+      await loadTable()
+    } else {
+      toast.error('ไม่สำเร็จ', 'เกิดข้อผิดพลาด')
+    }
+    loader.setLoadingOff()
+  })
   return tr
 }
 function loadNodata() {
   const clone = templateNoData.content.cloneNode(true)
   tableBody.appendChild(clone)
 }
-onMounted()
+
+window.addEventListener('DOMContentLoaded', async () => {
+  closeDialog.addEventListener('click', () => closeDialogUnit())
+  close.addEventListener('click', () => closeDialogUnit())
+  addButton.addEventListener('click', () => openAddUnitDialog())
+  buttonSaveChange.addEventListener('click', () => addNewUnit())
+  buttonEditChange.addEventListener('click', () => editUnit())
+  await loadTable()
+})

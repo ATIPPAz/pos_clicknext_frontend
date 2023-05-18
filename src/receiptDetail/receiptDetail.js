@@ -80,15 +80,18 @@ async function initPage() {
   const receiptId = new URLSearchParams(window.location.search).get('receiptId')
   const { statusCode, data } = await ReceiptApi.getOneReceipt(receiptId)
   if (statusCode == 200) {
+    console.log(data)
+    console.log(data.receiptTotalDiscount.toFixed(2))
     receiptCode.value = data.receiptCode
     titleTag.textContent = `Receipt: ${data.receiptCode} Detail`
     const date = data.receiptDate.split('T')[0]
     receiptDate.value = date
-    receiptTotalBeforeDiscount.value = data.receiptTotalBeforeDiscount
-    receiptTotalDiscount.value = data.receiptTotalDiscount
-    receiptSubTotal.value = data.receiptSubTotal
-    receiptTradeDiscount.value = data.receiptTradeDiscount
-    receiptGrandTotal.value = data.receiptGrandTotal
+    receiptTotalBeforeDiscount.value =
+      data.receiptTotalBeforeDiscount.toFixed(2)
+    receiptTotalDiscount.value = data.receiptTotalDiscount.toFixed(2)
+    receiptSubTotal.value = data.receiptSubTotal.toFixed(2)
+    receiptTradeDiscount.value = data.receiptTradeDiscount.toFixed(2)
+    receiptGrandTotal.value = data.receiptGrandTotal.toFixed(2)
     data.receiptdetails.forEach((detail, index) => {
       const row = createTableRow(index + 1)
       assignValueToDataTable(row, detail)
@@ -119,10 +122,10 @@ function assignValueToDataTable(tr, item) {
   rowItemName.textContent = item.itemName
   rowItemUnit.textContent = item.unitName
   rowItemQty.textContent = item.itemQty
-  rowItemPrice.textContent = item.itemPrice
-  rowItemDiscountPercent.textContent = item.itemDiscountPercent
-  rowItemDiscount.textContent = item.itemDiscount
-  rowItemTotal.textContent = item.itemAmount
+  rowItemPrice.textContent = item.itemPrice.toFixed(2)
+  rowItemDiscountPercent.textContent = item.itemDiscountPercent.toFixed(2)
+  rowItemDiscount.textContent = item.itemDiscount.toFixed(2)
+  rowItemTotal.textContent = item.itemAmount.toFixed(2)
 }
 function createTableRow(id) {
   const tr = document.createElement('tr')

@@ -10,7 +10,9 @@ export async function updateRequest(path = '', data = {}, type = '') {
       'Content-Type': type == '' ? 'application/json' : type,
     },
     body: JSON.stringify(data),
-  }).then((e) => e.json())
+  })
+    .then((e) => e.json())
+    .catch((e) => (e.statusCode = 500))
   return res
 }
 
@@ -21,7 +23,9 @@ export async function createRequest(path = '', data = {}, type = '') {
       'Content-Type': type == '' ? 'application/json' : type,
     },
     body: JSON.stringify(data),
-  }).then((e) => e.json())
+  })
+    .then((e) => e.json())
+    .catch((e) => (e.statusCode = 500))
   return res
 }
 export async function deleteRequest(path = '', id = {}) {
@@ -31,6 +35,8 @@ export async function deleteRequest(path = '', id = {}) {
       'Content-type': 'application/json',
     },
     body: JSON.stringify(id),
-  }).then((e) => e.json())
+  })
+    .then((e) => e.json())
+    .catch((e) => (e.statusCode = 500))
   return res
 }
