@@ -2,9 +2,9 @@ function openDialog(id) {
   const modal = document.getElementById(id)
   modal.style.display = 'block'
 }
-function onDialogClose(id) {
+function closeDialog(id) {
   const modal = document.getElementById(id)
   modal.style.display = 'none'
 }
 
-export { openDialog, onDialogClose }
+export { openDialog, closeDialog }

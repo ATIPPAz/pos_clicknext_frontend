@@ -2,7 +2,7 @@ import { initLoader } from '../../plugins/loading.js'
 const body = document.getElementById('bodyPage')
 const loader = initLoader(body)
 
-import { openDialog, onDialogClose } from '../../main.js'
+import { openDialog, closeDialog } from '../../main.js'
 import { initToast } from '../../plugins/toast.js'
 
 import * as ItemApi from '../../plugins/api/itemApi.js'
@@ -132,10 +132,10 @@ async function editItem() {
     const res = await ItemApi.updateItem(updateBody)
     if (res.statusCode === 204) {
       Toast.success('สำเร็จ', 'เพิ่มข้อมูลไอเทมเรียบร้อย')
-      onDialogClose('dialogItem')
+      closeDialog('dialogItem')
       await loadTable()
     }
-    onDialogClose('dialogItem')
+    closeDialog('dialogItem')
     loader.setLoadingOff()
   }
 }
@@ -187,7 +187,7 @@ async function addNewItem() {
     nameValue.value = ''
     unitValue.value = '3'
     priceValue.value = 0
-    onDialogClose('dialogItem')
+    closeDialog('dialogItem')
     loader.setLoadingOff()
   }
 }
@@ -270,7 +270,7 @@ async function onPageLoad() {
   loader.setLoadingOn()
   buttonSaveChange.addEventListener('click', addNewItem)
   buttonEditChange.addEventListener('click', editItem)
-  buttonCloseDialog.addEventListener('click', () => onDialogClose('dialogItem'))
+  buttonCloseDialog.addEventListener('click', () => closeDialog('dialogItem'))
   openDialogButton.addEventListener('click', () =>
     openDialogWithType(undefined),
   )
