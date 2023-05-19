@@ -2,13 +2,9 @@ import { getRequest, createRequest } from './fetchHelper.js'
 import { endpoint } from './endpoint.js'
 const controller = 'receipt'
 export async function getAllreceipt(objQueryString = {}) {
-  let queryString = '?'
-  for (const key in objQueryString) {
-    queryString += `${key}=${objQueryString[key]}&`
-  }
-  queryString = queryString.slice(0, -1)
+  const queryString = new URLSearchParams(objQueryString)
   return await getRequest(
-    `${endpoint}${controller}/getAllReceipt${queryString}`,
+    `${endpoint}${controller}/getAllReceipt?${queryString.toString()}`,
   )
 }
 

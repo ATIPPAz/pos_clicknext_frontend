@@ -1,5 +1,10 @@
 export async function getRequest(path) {
-  const res = await fetch(path).then((e) => e.json())
+  const res = await fetch(path)
+    .then((e) => e.json())
+    .catch((er) => {
+      console.log(er)
+      return { statusCode: 500, data: { massage: 'server error' } }
+    })
   return res
 }
 
@@ -25,7 +30,13 @@ export async function createRequest(path = '', data = {}, type = '') {
     body: JSON.stringify(data),
   })
     .then((e) => e.json())
-    .catch((e) => (e.statusCode = 500))
+    .catch((e) => {
+      console.log(e)
+      return {
+        data: null,
+        statusCode: 500,
+      }
+    })
   return res
 }
 export async function deleteRequest(path = '', id = {}) {

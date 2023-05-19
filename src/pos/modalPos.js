@@ -116,6 +116,7 @@ export function initModalSelectItem(elementDialog, itemList) {
       console.log(selectedItemIndex)
 
       element.style.display = 'block'
+
       return new Promise((resolve) => {
         _resolve = resolve
       })
