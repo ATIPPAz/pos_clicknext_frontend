@@ -37,6 +37,7 @@ function setDialog(x) {
   }
   typeDialog = x
 }
+
 async function saveUpdate() {
   if (unitName.value == '') {
     toast.error('ข้อมูลไม่ครบที่กำหนด', 'กรุณากรอกชื่อหน่วย')
@@ -110,18 +111,17 @@ async function loadTable() {
   tableBody.innerHTML = ''
   const unitItems = await getData()
   if (unitItems.length === 0) {
-    unitItems.push(undefined)
-  }
-  unitItems.forEach((unit, index) => {
-    const row = createRow(index, unit)
+    const row = templateNoData.content.cloneNode(true)
     tableBody.appendChild(row)
-  })
+  } else {
+    unitItems.forEach((unit, index) => {
+      const row = createRow(index, unit)
+      tableBody.appendChild(row)
+    })
+  }
   loader.setLoadingOff()
 }
 function createRow(index = undefined, item = undefined) {
-  if (!item) {
-    return templateNoData.content.cloneNode(true)
-  }
   const tr = document.createElement('tr')
   const clone = templateRowTable.content.cloneNode(true)
   tr.appendChild(clone)

@@ -1,12 +1,10 @@
 import { initLoader } from '../../plugins/loading.js'
-const body = document.getElementById('bodyPage')
-const loader = initLoader(body)
-
 import { openDialog, closeDialog } from '../../main.js'
 import { initToast } from '../../plugins/toast.js'
-
 import * as ItemApi from '../../plugins/api/itemApi.js'
 import * as UnitApi from '../../plugins/api/unitApi.js'
+
+const body = document.getElementById('bodyPage')
 const templateNoData = document.getElementById('templateNoData')
 const buttonSaveChange = document.getElementById('add')
 const buttonEditChange = document.getElementById('edit')
@@ -19,7 +17,10 @@ const unitEdit = document.getElementById('itemDropdown')
 const title = document.getElementById('titleDialog')
 const openDialogButton = document.getElementById('opendialogbutton')
 const buttonCloseDialog = document.getElementById('closeDialogButton')
+
+const loader = initLoader(body)
 const Toast = initToast(body)
+
 let type = 'add'
 let editId = null
 

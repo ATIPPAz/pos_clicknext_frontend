@@ -54,13 +54,11 @@ async function search() {
   }
   if (validationDate(startDate.value, endDate.value)) {
     tBody.innerHTML = ''
-    const { statusCode, data } = await ReceiptApi.getAllreceipt({
-      startDate: startDate.value,
-      endDate: endDate.value,
-    })
+    const { statusCode, data } = await ReceiptApi.getAllreceipt(
+      startDate.value,
+      endDate.value,
+    )
     if (statusCode == 200) {
-      console.log('ds')
-      console.log(data)
       if (data.length > 0) {
         data.forEach((receipt) => {
           const tr = createTableRow(receipt.receiptId)
@@ -107,10 +105,10 @@ async function onPageLoad() {
   loader.setLoadingOn()
   startDate.value = beforeOneDayTime
   endDate.value = dateTime
-  const { statusCode, data } = await ReceiptApi.getAllreceipt({
-    startDate: startDate.value,
-    endDate: endDate.value,
-  })
+  const { statusCode, data } = await ReceiptApi.getAllreceipt(
+    startDate.value,
+    endDate.value,
+  )
   if (statusCode == 200) {
     console.log('ds')
     console.log(data)

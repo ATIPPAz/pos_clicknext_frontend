@@ -93,78 +93,105 @@ function createRowPos() {
     const id = await modal.openModal()
     if (id) {
       const data = itemList.find((e) => e.itemId == +id)
-      const rowData = createTableRow(data)
+      const { rowData, tr } = createTableRow(data)
+      posBody.insertBefore(tr, row)
       itemSelectList.push(rowData)
     }
   })
 }
 
 async function createPos() {
-  loader.setLoadingOn()
-  if (itemSelectList.length > 0) {
-    const details = itemSelectList.map((e) => {
-      return {
-        itemId: e.itemId,
-        itemQty: e.itemQty,
-        itemPrice: e.itemPrice,
-        itemDiscount: e.itemDiscount,
-        itemDiscountPercent: e.itemDiscountPercent,
-        itemAmount: e.itemAmount,
-        unitId: e.unitId,
-      }
-    })
-    const id = details.findIndex((e) => e.itemQty <= 0)
-    console.log(details)
-    if (id == -1) {
-      const date = total.receiptDate.value.split('/')
-      const posPayload = {
-        receiptCode: 'T',
-        receiptDate: `${date[2]}-${date[1]}-${date[0]}`,
-        receiptTotalBeforeDiscount: parseFloat(
-          total.receiptTotalBeforDiscount.value,
-        ),
-        receiptTotalDiscount: parseFloat(total.receiptTotalDiscount.value),
-        receiptSubTotal: parseFloat(total.receiptSubTotal.value),
-        receiptTradeDiscount: parseFloat(total.receiptTradeDiscount.value),
-        receiptGrandTotal: parseFloat(total.receiptGrandTotal.value),
-        receiptdetails: details,
-      }
-      console.log(posPayload)
-      const { statusCode } = await PosApi.createReceipt(posPayload)
-      if (statusCode == 201) {
-        toast.success('สำเร็จ', 'ทำรายการสินค้าสำเร็จ')
-        itemSelectList = []
-        total.receiptTotalBeforDiscount.value = 0
-        total.receiptTotalDiscount.value = 0
-        total.receiptSubTotal.value = 0
-        total.receiptTradeDiscount.value = 0
-        total.receiptGrandTotal.value = 0
-        posBody.innerHTML = ''
-        createRowPos()
-      } else {
-        toast.error('ไม่สำเร็จ', 'เกิดข้อผิดพลาด')
-      }
-    } else {
-      toast.error('ข้อมูลไม่สมบูรณ์', 'กรุณากรอกจำนวนสินค้าให้มากกว่า 0')
-    }
-  } else {
+  if (itemSelectList.length === 0) {
     toast.error('ไม่สามารถบันทึกได้', 'กรุณาเลือกสินค้าก่อน')
+    return
   }
+
+  const details = itemSelectList.map((e) => {
+    return {
+      itemId: e.itemId,
+      itemQty: e.itemQty,
+      itemPrice: e.itemPrice,
+      itemDiscount: e.itemDiscount,
+      itemDiscountPercent: e.itemDiscountPercent,
+      itemAmount: e.itemAmount,
+      unitId: e.unitId,
+    }
+  })
+  const id = details.findIndex((e) => e.itemQty <= 0)
+  if (id >= 0) {
+    toast.error('ข้อมูลไม่สมบูรณ์', 'กรุณากรอกจำนวนสินค้าให้มากกว่า 0')
+    return
+  }
+  loader.setLoadingOn()
+  const posPayload = {
+    receiptCode: 'T',
+    receiptDate: formatDateForBackend(total.receiptDate.value),
+    receiptTotalBeforeDiscount: parseFloat(
+      total.receiptTotalBeforDiscount.value,
+    ),
+    receiptTotalDiscount: parseFloat(total.receiptTotalDiscount.value),
+    receiptSubTotal: parseFloat(total.receiptSubTotal.value),
+    receiptTradeDiscount: parseFloat(total.receiptTradeDiscount.value),
+    receiptGrandTotal: parseFloat(total.receiptGrandTotal.value),
+    receiptdetails: details,
+  }
+  const { statusCode } = await PosApi.createReceipt(posPayload)
+  if (statusCode == 201) {
+    toast.success('สำเร็จ', 'ทำรายการสินค้าสำเร็จ')
+    itemSelectList.forEach((e) => {
+      posBody.removeChild(posBody.firstChild)
+    })
+
+    itemSelectList = []
+    total.receiptTotalBeforDiscount.value = 0
+    total.receiptTotalDiscount.value = 0
+    total.receiptSubTotal.value = 0
+    total.receiptTradeDiscount.value = 0
+    total.receiptGrandTotal.value = 0
+    // posBody.innerHTML = ''
+
+    // createRowPos()
+  } else {
+    toast.error('ไม่สำเร็จ', 'เกิดข้อผิดพลาด')
+  }
+
   loader.setLoadingOff()
+}
+
+function formatDateForBackend(dateString) {
+  const date = dateString.split('/')
+  return `${date[2]}-${date[1]}-${date[0]}`
+}
+
+function formatDateForDisplay(date) {
+  const dayNo = (date.getDate() + '').padStart(2, '0')
+  const month = (date.getMonth() + 1).toString().padStart(2, '0')
+  const year = date.getFullYear()
+  return `${dayNo}/${month}/${year}`
 }
 
 function calculate() {
   if (itemSelectList.length > 0) {
-    total.receiptTotalBeforDiscount.value = itemSelectList.reduce(
-      (cur, next) => cur + next.itemQty * next.itemPrice,
-      0,
-    )
-    total.receiptTotalDiscount.value = itemSelectList.reduce(
-      (cur, next) => cur + next.itemDiscount,
-      0,
-    )
+    total.receiptTotalBeforDiscount.value = 0
+    total.receiptTotalDiscount.value = 0
+    itemSelectList.forEach((e) => {
+      total.receiptTotalBeforDiscount.value =
+        parseFloat(total.receiptTotalBeforDiscount.value) +
+        parseFloat(e.itemQty) * parseFloat(e.itemPrice)
+      total.receiptTotalDiscount.value =
+        parseFloat(total.receiptTotalDiscount.value) +
+        parseFloat(e.itemDiscount)
+    })
+    // total.receiptTotalBeforDiscount.value = itemSelectList.reduce(
+    //   (accumulated, current) =>
+    //     accumulated + current.itemQty * current.itemPrice,
+    //   0,
+    // )
+    // total.receiptTotalDiscount.value = itemSelectList.reduce(
+    //   (accumulated, current) => accumulated + current.itemDiscount,
+    //   0,
+    // )
     if (total.receiptTotalBeforDiscount.value <= 0) {
-      console.log('fyudhjioklp')
       total.receiptTradeDiscount.value = 0
       total.receiptTotalBeforDiscount.value = 0
       total.receiptTotalDiscount.value = 0
@@ -189,11 +216,11 @@ function calculate() {
 }
 
 function createTableRow(data) {
-  const row = document.createElement('tr')
+  const tr = document.createElement('tr')
   const clone = templateRowTable.content.cloneNode(true)
-  row.appendChild(clone)
-  const tr = dataTable.insertRow(dataTable.rows.length - 1)
-  tr.innerHTML = row.innerHTML
+  tr.appendChild(clone)
+  // const tr = dataTable.insertRow(dataTable.rows.length - 1)
+  // tr.innerHTML = row.innerHTML
   const rowNumber = tr.querySelector('.rowNumber')
   const rowItemName = tr.querySelector('.rowItemName')
   const rowItemUnit = tr.querySelector('.rowItemUnit')
@@ -204,6 +231,21 @@ function createTableRow(data) {
   const rowItemTotal = tr.querySelector('.rowItemTotal')
   const changeNewItem = tr.querySelector('.changeNewItem')
   const deleteButton = tr.querySelector('.deleteButton')
+
+  let rowData = {
+    itemId: data.itemId,
+    itemName: data.itemName,
+    unitName: data.unitName,
+    itemCode: data.itemCode,
+    itemQty: 0,
+    itemPrice: data.itemPrice,
+    itemDiscount: 0,
+    itemDiscountPercent: 0,
+    unitId: data.unitId,
+    itemAmount: 0,
+    // index: tr.dataset.index,
+    tr: tr,
+  }
 
   rowItemQty.addEventListener(
     'change',
@@ -241,7 +283,7 @@ function createTableRow(data) {
     const idAfterChange = await modal.openModal(idBeforeChange)
     if (idBeforeChange != idAfterChange && idAfterChange) {
       const data = itemList.find((e) => e.itemId == idAfterChange)
-      const rowData = {
+      rowData = {
         itemId: data.itemId,
         itemName: data.itemName,
         unitName: data.unitName,
@@ -251,8 +293,9 @@ function createTableRow(data) {
         itemDiscount: 0,
         itemDiscountPercent: 0,
         unitId: data.unitId,
-        index: tr.dataset.index,
+        // index: tr.dataset.index,
         itemAmount: 0,
+        tr: tr,
       }
 
       rowItemName.textContent = rowData.itemName
@@ -268,25 +311,20 @@ function createTableRow(data) {
     }
   })
   deleteButton.addEventListener('click', () => {
-    let index = itemSelectList.findIndex((e) => e.index === tr.dataset.index)
+    let index = itemSelectList.findIndex((e) => e.tr === tr)
+
     itemSelectList.splice(index, 1)
     posBody.removeChild(tr)
     for (let i = index; i < posBody.childNodes.length; i++) {
       index = i
       const row = posBody.childNodes[i]
       const rowNumber = row.querySelector('.rowNumber')
-      if (row.dataset.index > tr.dataset.index) {
-        rowNumber.textContent = i + 1
-      }
+      rowNumber.textContent = i + 1
     }
-    posBody.childNodes[posBody.childNodes.length - 1].querySelector(
-      '.rowNumber',
-    ).textContent = index + 1
     calculate()
   })
-  tr.dataset.index = posBody.children.length - 1
   changeNewItem.textContent = data.itemCode
-  rowNumber.textContent = posBody.children.length - 1
+  rowNumber.textContent = posBody.children.length
   rowItemName.textContent = data.itemName
   rowItemUnit.textContent = data.unitName
   rowItemQty.textContent = data.qty
@@ -294,23 +332,11 @@ function createTableRow(data) {
   rowItemDiscountPercent.textContent = data.itemDiscountPercent
   rowItemDiscount.textContent = 0
   rowItemTotal.textContent = 0
-  const rowData = {
-    itemId: data.itemId,
-    itemName: data.itemName,
-    unitName: data.unitName,
-    itemCode: data.itemCode,
-    itemQty: 0,
-    itemPrice: data.itemPrice,
-    itemDiscount: 0,
-    itemDiscountPercent: 0,
-    unitId: data.unitId,
-    itemAmount: 0,
-    index: tr.dataset.index,
-  }
+
   const createRow = posBody.children[posBody.children.length - 1]
   const createRowNumber = createRow.querySelector('.rowNumber')
-  createRowNumber.textContent = posBody.children.length
-  return rowData
+  createRowNumber.textContent = posBody.children.length + 1
+  return { rowData, tr }
   function isValidValue(value) {
     if (value < 0 || isNaN(value)) {
       return false
@@ -318,19 +344,15 @@ function createTableRow(data) {
     return true
   }
   function calRow() {
-    const index = itemSelectList.findIndex((e) => e.index == rowData.index)
-    itemSelectList[index].itemQty = parseFloat(rowItemQty.value)
+    // const index = itemSelectList.findIndex((e) => e.tr == rowData.tr)
+    rowData.itemQty = parseFloat(rowItemQty.value)
     const price = parseFloat(rowItemPrice.textContent)
-    const total = price * itemSelectList[index].itemQty
-    itemSelectList[index].itemDiscountPercent = parseFloat(
-      rowItemDiscountPercent.value,
-    )
-    itemSelectList[index].itemDiscount =
-      total * (itemSelectList[index].itemDiscountPercent / 100)
-    itemSelectList[index].itemAmount =
-      total - itemSelectList[index].itemDiscount
-    rowItemDiscount.textContent = itemSelectList[index].itemDiscount
-    rowItemTotal.textContent = itemSelectList[index].itemAmount
+    const total = price * rowData.itemQty
+    rowData.itemDiscountPercent = parseFloat(rowItemDiscountPercent.value)
+    rowData.itemDiscount = total * (rowData.itemDiscountPercent / 100)
+    rowData.itemAmount = total - rowData.itemDiscount
+    rowItemDiscount.textContent = rowData.itemDiscount
+    rowItemTotal.textContent = rowData.itemAmount
   }
 }
 
@@ -345,11 +367,6 @@ window.addEventListener('DOMContentLoaded', async () => {
     calculate()
   })
   const date = new Date()
-  const dateTime = `${
-    date.getDate().toString().length >= 1 ? '' : 0
-  }${date.getDate()}/${(date.getMonth() + 1).toString().length > 1 ? '' : 0}${
-    date.getMonth() + 1
-  }/${date.getFullYear()}`
-  total.receiptDate.value = dateTime
+  total.receiptDate.value = formatDateForDisplay(date)
   loader.setLoadingOff()
 })

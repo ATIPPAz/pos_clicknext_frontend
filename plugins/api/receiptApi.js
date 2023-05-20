@@ -1,8 +1,8 @@
 import { getRequest, createRequest } from './fetchHelper.js'
 import { endpoint } from './endpoint.js'
 const controller = 'receipt'
-export async function getAllreceipt(objQueryString = {}) {
-  const queryString = new URLSearchParams(objQueryString)
+export async function getAllreceipt(start = '', end = '') {
+  const queryString = new URLSearchParams({ startDate: start, endDate: end })
   return await getRequest(
     `${endpoint}${controller}/getAllReceipt?${queryString.toString()}`,
   )
