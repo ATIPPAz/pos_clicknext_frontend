@@ -100,7 +100,7 @@ function createRowPos() {
   })
 }
 
-async function createPos() {
+async function saveReceipt() {
   if (itemSelectList.length === 0) {
     toast.error('ไม่สามารถบันทึกได้', 'กรุณาเลือกสินค้าก่อน')
     return
@@ -117,8 +117,8 @@ async function createPos() {
       unitId: e.unitId,
     }
   })
-  const id = details.findIndex((e) => e.itemQty <= 0)
-  if (id >= 0) {
+  const detailIndex = details.findIndex((e) => e.itemQty <= 0)
+  if (detailIndex >= 0) {
     toast.error('ข้อมูลไม่สมบูรณ์', 'กรุณากรอกจำนวนสินค้าให้มากกว่า 0')
     return
   }
@@ -148,9 +148,6 @@ async function createPos() {
     total.receiptSubTotal.value = 0
     total.receiptTradeDiscount.value = 0
     total.receiptGrandTotal.value = 0
-    // posBody.innerHTML = ''
-
-    // createRowPos()
   } else {
     toast.error('ไม่สำเร็จ', 'เกิดข้อผิดพลาด')
   }
@@ -182,15 +179,6 @@ function calculate() {
         parseFloat(total.receiptTotalDiscount.value) +
         parseFloat(e.itemDiscount)
     })
-    // total.receiptTotalBeforDiscount.value = itemSelectList.reduce(
-    //   (accumulated, current) =>
-    //     accumulated + current.itemQty * current.itemPrice,
-    //   0,
-    // )
-    // total.receiptTotalDiscount.value = itemSelectList.reduce(
-    //   (accumulated, current) => accumulated + current.itemDiscount,
-    //   0,
-    // )
     if (total.receiptTotalBeforDiscount.value <= 0) {
       total.receiptTradeDiscount.value = 0
       total.receiptTotalBeforDiscount.value = 0
@@ -312,11 +300,9 @@ function createTableRow(data) {
   })
   deleteButton.addEventListener('click', () => {
     let index = itemSelectList.findIndex((e) => e.tr === tr)
-
     itemSelectList.splice(index, 1)
     posBody.removeChild(tr)
     for (let i = index; i < posBody.childNodes.length; i++) {
-      index = i
       const row = posBody.childNodes[i]
       const rowNumber = row.querySelector('.rowNumber')
       rowNumber.textContent = i + 1
@@ -338,10 +324,7 @@ function createTableRow(data) {
   createRowNumber.textContent = posBody.children.length + 1
   return { rowData, tr }
   function isValidValue(value) {
-    if (value < 0 || isNaN(value)) {
-      return false
-    }
-    return true
+    return !(value < 0 || isNaN(value))
   }
   function calRow() {
     // const index = itemSelectList.findIndex((e) => e.tr == rowData.tr)
@@ -360,7 +343,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   loader.setLoadingOn()
   createRowPos()
   itemList = await loadItem()
-  savePos.addEventListener('click', () => createPos())
+  savePos.addEventListener('click', () => saveReceipt())
   modal = initModalSelectItem(dialog, itemList)
 
   _tradeDiscount.addEventListener('change', (e) => {

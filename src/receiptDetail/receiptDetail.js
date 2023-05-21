@@ -1,23 +1,24 @@
 import { initLoader } from '../../plugins/loading.js'
-const body = document.getElementById('bodyPage')
-const loader = initLoader(body)
-import * as ReceiptApi from '../../plugins/api/receiptApi.js'
 import { initToast } from '../../plugins/toast.js'
+import * as ReceiptApi from '../../plugins/api/receiptApi.js'
 
+const _receiptTotalDiscount = document.getElementById('receiptTotalDiscount')
+const _receiptTradeDiscount = document.getElementById('receiptTradeDiscount')
+const _receiptGrandTotal = document.getElementById('receiptGrandTotal')
+const templateRowTable = document.getElementById('templateRowTable')
+const _receiptSubTotal = document.getElementById('receiptSubTotal')
+const _receiptDate = document.getElementById('receiptDate')
+const _receiptId = document.getElementById('receiptId')
+const tableBody = document.getElementById('tableBody')
+const titleTag = document.getElementById('titleTag')
 const _receiptTotalBeforeDiscount = document.getElementById(
   'receiptTotalBeforeDiscount',
 )
-const _receiptDate = document.getElementById('receiptDate')
-const _receiptId = document.getElementById('receiptId')
-const titleTag = document.getElementById('titleTag')
-const _receiptTotalDiscount = document.getElementById('receiptTotalDiscount')
-const _receiptSubTotal = document.getElementById('receiptSubTotal')
-const _receiptTradeDiscount = document.getElementById('receiptTradeDiscount')
-const _receiptGrandTotal = document.getElementById('receiptGrandTotal')
-const tableBody = document.getElementById('tableBody')
-const templateRowTable = document.getElementById('templateRowTable')
+const body = document.getElementById('bodyPage')
 
+const loader = initLoader(body)
 const Toast = initToast(body)
+
 const receiptTotalBeforeDiscount = {
   get value() {
     return _receiptTotalBeforeDiscount.value

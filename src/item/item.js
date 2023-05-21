@@ -89,6 +89,7 @@ async function openDialogWithType(itemData) {
   loader.setLoadingOn()
   const res = await getUnitData()
   const isEdit = itemData ? true : false
+  let itemDataDropdown = []
   if (isEdit) {
     itemCodeEdit.disabled = true
     typeDialog.value = 'edit'
@@ -97,6 +98,7 @@ async function openDialogWithType(itemData) {
     nameValue.value = itemData.name
     idValue.value = itemData.code
     priceValue.value = itemData.price
+    itemDataDropdown = itemData.unit
   } else {
     typeDialog.value = 'add'
     buttonSaveChange.style.display = 'inline-block'
@@ -104,41 +106,42 @@ async function openDialogWithType(itemData) {
     nameValue.value = ''
     idValue.value = ''
     priceValue.value = '0'
+    itemDataDropdown = unitData.length > 0 ? unitData[0].id : undefined
   }
-  setDropdownOption(res, selectItemDropdown(res, isEdit, itemData))
+
+  setDropdownOption(res, itemDataDropdown)
   loader.setLoadingOff()
   openDialog('dialogItem')
 }
-function selectItemDropdown(unitData, isEdit, itemData) {
-  if (isEdit) {
-    return itemData.unit
-  }
-  return unitData.length > 0 ? unitData[0].id : undefined
-}
-async function editItem() {
-  loader.setLoadingOn()
+// function selectItemDropdown(unitData, isEdit, itemData) {
+//   if (isEdit) {
+//     return itemData.unit
+//   }
+//   return unitData.length > 0 ? unitData[0].id : undefined
+// }
+async function saveUpdate() {
   if (
     unitValue.value === '' ||
     nameValue.value === '' ||
     priceValue.value === ''
   ) {
     Toast.error('ไม่สำเร็จ', 'กรุณากรอกให้ครบทุกช่อง')
-  } else {
-    const updateBody = {
-      itemId: +editId,
-      itemName: nameValue.value,
-      itemPrice: +priceValue.value,
-      unitId: +unitValue.value,
-    }
-    const res = await ItemApi.updateItem(updateBody)
-    if (res.statusCode === 204) {
-      Toast.success('สำเร็จ', 'เพิ่มข้อมูลไอเทมเรียบร้อย')
-      closeDialog('dialogItem')
-      await loadTable()
-    }
-    closeDialog('dialogItem')
-    loader.setLoadingOff()
+    return
   }
+  loader.setLoadingOn()
+  const updateBody = {
+    itemId: +editId,
+    itemName: nameValue.value,
+    itemPrice: +priceValue.value,
+    unitId: +unitValue.value,
+  }
+  const res = await ItemApi.updateItem(updateBody)
+  if (res.statusCode === 204) {
+    Toast.success('สำเร็จ', 'เพิ่มข้อมูลไอเทมเรียบร้อย')
+    await loadTable()
+  }
+  closeDialog('dialogItem')
+  loader.setLoadingOff()
 }
 async function changeItem(row) {
   editId = row.dataset.itemId
@@ -161,7 +164,7 @@ async function deleteItem(id) {
   }
   loader.setLoadingOff()
 }
-async function addNewItem() {
+async function saveNewItem() {
   loader.setLoadingOn()
   if (
     unitValue.value == '' ||
@@ -269,8 +272,8 @@ async function loadTable() {
 }
 async function onPageLoad() {
   loader.setLoadingOn()
-  buttonSaveChange.addEventListener('click', addNewItem)
-  buttonEditChange.addEventListener('click', editItem)
+  buttonSaveChange.addEventListener('click', saveNewItem)
+  buttonEditChange.addEventListener('click', saveUpdate)
   buttonCloseDialog.addEventListener('click', () => closeDialog('dialogItem'))
   openDialogButton.addEventListener('click', () =>
     openDialogWithType(undefined),
