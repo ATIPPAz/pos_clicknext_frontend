@@ -84,31 +84,21 @@ function formatDateForDisplay(date) {
   return `${year}-${month}-${dayNo}`
 }
 
-async function initPage() {
-  loader.setLoadingOn()
+async function getDetailsData() {
   const receiptId = new URLSearchParams(window.location.search).get('receiptId')
   const { statusCode, data } = await ReceiptApi.getOneReceipt(receiptId)
   if (statusCode === status.getSuccess) {
-    receiptCode.value = data.receiptCode
-    titleTag.textContent = `Receipt: ${data.receiptCode} Detail`
-    const date = new Date(data.receiptDate)
-    receiptDate.value = formatDateForDisplay(date)
-    receiptTotalBeforeDiscount.value =
-      data.receiptTotalBeforeDiscount.toFixed(2)
-    receiptTotalDiscount.value = data.receiptTotalDiscount.toFixed(2)
-    receiptSubTotal.value = data.receiptSubTotal.toFixed(2)
-    receiptTradeDiscount.value = data.receiptTradeDiscount.toFixed(2)
-    receiptGrandTotal.value = data.receiptGrandTotal.toFixed(2)
-    data.receiptdetails.forEach((detail, index) => {
-      const row = createTableRow(index + 1)
-      assignValueToDataTable(row, detail)
-    })
-  } else {
-    Toast.error('ไม่สำร็จ', 'มีข้อผิดพลาด')
+    return data
   }
-  loader.setLoadingOff()
+  return []
 }
-function assignValueToDataTable(tr, item) {
+
+function createRow(index, item) {
+  const tr = document.createElement('tr')
+  const clone = templateRowTable.content.cloneNode(true)
+  tr.appendChild(clone)
+  const rowNumber = tr.querySelector('.rowNumber')
+  rowNumber.textContent = index + 1
   const rowItemCode = tr.querySelector('.rowItemCode')
   const rowItemName = tr.querySelector('.rowItemName')
   const rowItemUnit = tr.querySelector('.rowItemUnit')
@@ -117,14 +107,6 @@ function assignValueToDataTable(tr, item) {
   const rowItemDiscountPercent = tr.querySelector('.rowItemDiscountPercent')
   const rowItemDiscount = tr.querySelector('.rowItemDiscount')
   const rowItemTotal = tr.querySelector('.rowItemTotal')
-  tr.dataset.rowItemCode = item.itemCode
-  tr.dataset.rowItemName = item.itemName
-  tr.dataset.rowItemUnit = item.unitName
-  tr.dataset.rowItemQty = item.itemQty
-  tr.dataset.rowItemPrice = item.itemPrice
-  tr.dataset.rowItemDiscountPercent = item.itemDiscountPercent
-  tr.dataset.rowItemDiscount = item.itemDiscount
-  tr.dataset.rowItemTotal = item.itemAmount
   rowItemCode.textContent = item.itemCode
   rowItemName.textContent = item.itemName
   rowItemUnit.textContent = item.unitName
@@ -133,15 +115,30 @@ function assignValueToDataTable(tr, item) {
   rowItemDiscountPercent.textContent = item.itemDiscountPercent.toFixed(2)
   rowItemDiscount.textContent = item.itemDiscount.toFixed(2)
   rowItemTotal.textContent = item.itemAmount.toFixed(2)
-}
-function createTableRow(id) {
-  const tr = document.createElement('tr')
-  const clone = templateRowTable.content.cloneNode(true)
-  tr.dataset.counterIdx = id
-  tr.appendChild(clone)
-  const rowNumber = tr.querySelector('.rowNumber')
-  rowNumber.textContent = id
-  tableBody.appendChild(tr)
   return tr
 }
-initPage()
+
+async function loadTable() {
+  loader.setLoadingOn()
+  tableBody.innerHTML = ''
+  const res = await getDetailsData()
+  if (res.receiptdetails.length !== 0) {
+    res.receiptdetails.forEach((item, index) => {
+      const row = createRow(index, item)
+      tableBody.appendChild(row)
+    })
+    receiptCode.value = res.receiptCode
+    titleTag.textContent = `Receipt: ${res.receiptCode} Detail`
+    const date = new Date(res.receiptDate)
+    receiptDate.value = formatDateForDisplay(date)
+    receiptTotalBeforeDiscount.value = res.receiptTotalBeforeDiscount.toFixed(2)
+    receiptTotalDiscount.value = res.receiptTotalDiscount.toFixed(2)
+    receiptSubTotal.value = res.receiptSubTotal.toFixed(2)
+    receiptTradeDiscount.value = res.receiptTradeDiscount.toFixed(2)
+    receiptGrandTotal.value = res.receiptGrandTotal.toFixed(2)
+  } else {
+    Toast.error('ไม่สำร็จ', 'มีข้อผิดพลาด')
+  }
+  loader.setLoadingOff()
+}
+loadTable()

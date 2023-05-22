@@ -257,7 +257,6 @@ async function loadTable() {
 async function onPageLoad() {
   loader.setLoadingOn()
   buttonSaveChange.addEventListener('click', saveChange)
-
   buttonCloseDialog.addEventListener('click', () => closeDialog('dialogItem'))
   openDialogButton.addEventListener('click', () =>
     openDialogWithType(undefined),
