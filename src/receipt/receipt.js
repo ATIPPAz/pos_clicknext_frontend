@@ -13,20 +13,21 @@ const body = document.getElementById('bodyPage')
 
 const loader = initLoader(body)
 const toast = initToast(body)
-
 const date = new Date()
 const dateTime = formatDateForDisplay(date)
-const beforeOneDayTime = `${date.getFullYear()}-${
-  (date.getMonth() + 1).toString().length > 1 ? '' : 0
-}${date.getMonth() + 1}-${
-  (date.getDate() - 1).toString().length >= 1 ? '' : 0
-}${date.getDate() - 1}`
+const beforeOneDayTime = formatDateForDisplay(getPreviousDay(date))
+
+function getPreviousDay(date = new Date()) {
+  const previous = new Date(date.getTime())
+  previous.setDate(date.getDate() - 1)
+  return previous
+}
 
 function formatDateForDisplay(date) {
   const dayNo = (date.getDate() + '').padStart(2, '0')
   const month = (date.getMonth() + 1).toString().padStart(2, '0')
   const year = date.getFullYear()
-  return `${year}/${month}/${dayNo}`
+  return `${year}-${month}-${dayNo}`
 }
 
 const startDate = {

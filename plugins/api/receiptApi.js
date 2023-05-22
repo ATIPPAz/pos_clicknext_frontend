@@ -8,6 +8,10 @@ export async function getAllreceipt(start = '', end = '') {
   )
 }
 
+export async function getPrefix() {
+  return await getRequest(`${endpoint}${controller}/getPrefix`)
+}
+
 export async function getOneReceipt(id) {
   return await getRequest(
     `${endpoint}${controller}/getOneReceipt?receiptId=${id}`,

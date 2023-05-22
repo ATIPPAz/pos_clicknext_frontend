@@ -1,15 +1,17 @@
-const dateNow = document.getElementById('dateNow')
 import { initLoader } from '../../plugins/loading.js'
 import { initToast } from '../../plugins/toast.js'
 import { initModalSelectItem } from './modalPos.js'
 import * as ItemApi from '../../plugins/api/itemApi.js'
 import * as PosApi from '../../plugins/api/receiptApi.js'
+
 const templateRowTable = document.getElementById('itemRow')
 const templateRowCreate = document.getElementById('rowCreate')
 const body = document.getElementById('bodyPage')
 const dialog = document.getElementById('dialogAddItemPos')
 const posBody = document.getElementById('posTable')
 const dataTable = document.getElementById('dataTable')
+const receiptCode = document.getElementById('receiptCode')
+const dateNow = document.getElementById('dateNow')
 const savePos = document.getElementById('savePos')
 const _totalBeforDiscount = document.getElementById('totalBeforDiscount')
 const _totalDiscount = document.getElementById('totalDiscount')
@@ -124,7 +126,6 @@ async function saveReceipt() {
   }
   loader.setLoadingOn()
   const posPayload = {
-    receiptCode: 'T',
     receiptDate: formatDateForBackend(total.receiptDate.value),
     receiptTotalBeforeDiscount: parseFloat(
       total.receiptTotalBeforDiscount.value,
@@ -266,8 +267,7 @@ function createTableRow(data) {
     false,
   )
   changeNewItem.addEventListener('click', async () => {
-    const idEdit = itemSelectList.findIndex((e) => e.index == tr.dataset.index)
-    const idBeforeChange = itemSelectList[idEdit].itemId
+    const idBeforeChange = rowData.itemId
     const idAfterChange = await modal.openModal(idBeforeChange)
     if (idBeforeChange != idAfterChange && idAfterChange) {
       const data = itemList.find((e) => e.itemId == idAfterChange)
@@ -294,6 +294,7 @@ function createTableRow(data) {
       rowItemDiscount.textContent = rowData.itemDiscount
       rowItemTotal.textContent = rowData.itemAmount
       changeNewItem.textContent = rowData.itemCode
+      const idEdit = itemSelectList.findIndex((e) => e.tr == rowData.tr)
       itemSelectList[idEdit] = rowData
       calculate()
     }
@@ -343,6 +344,9 @@ window.addEventListener('DOMContentLoaded', async () => {
   loader.setLoadingOn()
   createRowPos()
   itemList = await loadItem()
+  const { data } = await PosApi.getPrefix()
+  receiptCode.value = data.prefix_keyName.padEnd(5, 'X')
+  console.log(data)
   savePos.addEventListener('click', () => saveReceipt())
   modal = initModalSelectItem(dialog, itemList)
 
