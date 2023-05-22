@@ -54,57 +54,64 @@ function validateDate(start, end) {
   return date1 <= date2
 }
 
+async function getReceipt() {
+  const { statusCode, data } = await ReceiptApi.getAllreceipt(
+    startDate.value,
+    endDate.value,
+  )
+  if (statusCode === status.getSuccess) {
+    return data
+  }
+  return []
+}
+
+async function loadTable() {
+  tBody.innerHTML = ''
+  const items = await getReceipt()
+  if (items.length === 0) {
+    const row = templateNoData.content.cloneNode(true)
+    tBody.appendChild(row)
+  } else {
+    items.forEach((item, index) => {
+      const row = createRow(index, item)
+      tBody.appendChild(row)
+    })
+  }
+}
+
 async function search() {
-  loader.setLoadingOn()
   if (startDate.value == '' || endDate.value == '') {
     toast.error('ข้อมูลผิดรูปแบบ', 'กรุณาเลือกวันที่ให้ครบสองอัน')
     return
   }
-  if (validateDate(startDate.value, endDate.value)) {
-    tBody.innerHTML = ''
-    const { statusCode, data } = await ReceiptApi.getAllreceipt(
-      startDate.value,
-      endDate.value,
-    )
-    if (statusCode === status.getSuccess) {
-      if (data.length > 0) {
-        data.forEach((receipt) => {
-          const tr = createTableRow(receipt.receiptId)
-          assignValueToDataTable(tr, receipt)
-        })
-      } else {
-        loadNodata()
-      }
-    } else {
-      loadNodata()
-    }
-  } else {
+  if (!validateDate(startDate.value, endDate.value)) {
     toast.error('ข้อมูลผิดรูปแบบ', 'กรุณาเลือกวันเริ่มต้นก่อนวันสิ้นสุด')
+    return
   }
+  loader.setLoadingOn()
+  await loadTable()
   loader.setLoadingOff()
 }
 
-function assignValueToDataTable(tr, item) {
+function createRow(id, item) {
+  const tr = document.createElement('tr')
+  const clone = templateRowTable.content.cloneNode(true)
+  tr.appendChild(clone)
+  const rowReceiptDetails = tr.querySelector('.rowReceiptDetails')
+  rowReceiptDetails.addEventListener('click', () =>
+    detailsClick(item.receiptId),
+  )
+  const rowNumber = tr.querySelector('.rowNumber')
+  rowNumber.textContent = dataTable.rows.length
   const rowReceiptCode = tr.querySelector('.rowReceiptCode')
   const rowReceiptDate = tr.querySelector('.rowReceiptDate')
   const rowReceiptGrandPrice = tr.querySelector('.rowReceiptGrandPrice')
   rowReceiptCode.textContent = item.receiptCode
   rowReceiptDate.textContent = item.receiptDate
   rowReceiptGrandPrice.textContent = item.receiptGrandTotal
-  tBody.appendChild(tr)
-}
-function createTableRow(id) {
-  const tr = document.createElement('tr')
-  const clone = templateRowTable.content.cloneNode(true)
-  tr.appendChild(clone)
-  tr.dataset.counterIdx = id
-  const rowReceiptDetails = tr.querySelector('.rowReceiptDetails')
-  rowReceiptDetails.addEventListener('click', () => detailsClick(id))
-  const rowNumber = tr.querySelector('.rowNumber')
-  rowNumber.textContent = dataTable.rows.length
-  tBody.appendChild(tr)
   return tr
 }
+
 function detailsClick(id) {
   window.location.href = `../receiptDetail/receiptDetail.html?receiptId=${id}`
 }
@@ -112,23 +119,7 @@ async function onPageLoad() {
   loader.setLoadingOn()
   startDate.value = beforeOneDayTime
   endDate.value = dateTime
-  const { statusCode, data } = await ReceiptApi.getAllreceipt(
-    startDate.value,
-    endDate.value,
-  )
-  if (statusCode === status.getSuccess) {
-    if (data.length > 0) {
-      data.forEach((receipt) => {
-        const tr = createTableRow(receipt.receiptId)
-        assignValueToDataTable(tr, receipt)
-      })
-    } else {
-      console.log('no')
-      loadNodata()
-    }
-  } else {
-    loadNodata()
-  }
+  await loadTable()
   searchButton.addEventListener('click', search)
   loader.setLoadingOff()
 }

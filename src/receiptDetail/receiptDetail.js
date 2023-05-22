@@ -90,7 +90,7 @@ async function getDetailsData() {
   if (statusCode === status.getSuccess) {
     return data
   }
-  return []
+  return { receiptdetails: [] }
 }
 
 function createRow(index, item) {

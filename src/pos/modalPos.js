@@ -59,7 +59,6 @@ export function initModalSelectItem(elementDialog, itemList) {
     closeModel()
   })
   function setCurrentItem() {
-    console.log(itemSelect.value)
     if (!!itemSelect.value) {
       itemSelectTitle.value = true
       _itemSelectContent.innerHTML = `
@@ -84,7 +83,6 @@ export function initModalSelectItem(elementDialog, itemList) {
         e.classList.remove('selected')
         e.dataset.selected = false
       })
-      console.log(li.dataset)
       li.classList.add('selected')
       li.dataset.selected = true
       selectedItemIndex = +li.dataset.index
@@ -105,7 +103,6 @@ export function initModalSelectItem(elementDialog, itemList) {
         const index = liList.findIndex((e) => e.dataset.itemId == itemId)
         if (index >= 0) {
           const li = liList[index]
-          console.log(li)
           li.classList.add('selected')
           selectedItemIndex = index
         }
@@ -113,10 +110,7 @@ export function initModalSelectItem(elementDialog, itemList) {
         selectedItemIndex = undefined
       }
       setCurrentItem()
-      console.log(selectedItemIndex)
-
       element.style.display = 'block'
-
       return new Promise((resolve) => {
         _resolve = resolve
       })
