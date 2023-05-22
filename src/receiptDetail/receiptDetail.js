@@ -141,4 +141,5 @@ async function loadTable() {
   }
   loader.setLoadingOff()
 }
+
 loadTable()
