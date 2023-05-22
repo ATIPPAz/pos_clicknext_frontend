@@ -130,27 +130,7 @@ async function saveUpdate() {
   closeDialog('dialogItem')
   loader.setLoadingOff()
 }
-async function changeItem(row) {
-  editId = row.dataset.itemId
-  await openDialogWithType({
-    code: row.dataset.rowItemCode,
-    name: row.dataset.rowItemName,
-    unit: row.dataset.rowItemUnit,
-    price: row.dataset.rowItemPrice,
-  })
-}
-async function deleteItem(id) {
-  loader.setLoadingOn()
-  const { statusCode } = await ItemApi.deleteItem(id)
-  if (statusCode === status.deleteSuccess) {
-    Toast.success('สำเร็จ', 'ลบสำเร็จ')
 
-    await loadTable()
-  } else {
-    Toast.error('ไม่สำเร็จ', 'เกิดข้อผิดพลาด')
-  }
-  loader.setLoadingOff()
-}
 async function saveNewItem() {
   loader.setLoadingOn()
   if (
