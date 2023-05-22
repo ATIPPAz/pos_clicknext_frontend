@@ -1,6 +1,7 @@
 import { initLoader } from '../../plugins/loading.js'
 import { initToast } from '../../plugins/toast.js'
 import { initModalSelectItem } from './modalPos.js'
+import { statusCode as status } from '../../plugins/statusCode.js'
 import * as ItemApi from '../../plugins/api/itemApi.js'
 import * as PosApi from '../../plugins/api/receiptApi.js'
 
@@ -78,7 +79,7 @@ let itemSelectList = []
 
 async function loadItem() {
   const { statusCode, data } = await ItemApi.getItem()
-  if (statusCode == 200) {
+  if (statusCode === status.getSuccess) {
     return data
   }
   toast.error('เกิดข้อผิดพลาด', 'ไม่สามารถโหลดข้อมูลไอเทมได้')
@@ -137,7 +138,7 @@ async function saveReceipt() {
     receiptdetails: details,
   }
   const { statusCode } = await PosApi.createReceipt(posPayload)
-  if (statusCode == 201) {
+  if (statusCode === status.createSuccess) {
     toast.success('สำเร็จ', 'ทำรายการสินค้าสำเร็จ')
     itemSelectList.forEach((e) => {
       posBody.removeChild(posBody.firstChild)
@@ -208,8 +209,6 @@ function createTableRow(data) {
   const tr = document.createElement('tr')
   const clone = templateRowTable.content.cloneNode(true)
   tr.appendChild(clone)
-  // const tr = dataTable.insertRow(dataTable.rows.length - 1)
-  // tr.innerHTML = row.innerHTML
   const rowNumber = tr.querySelector('.rowNumber')
   const rowItemName = tr.querySelector('.rowItemName')
   const rowItemUnit = tr.querySelector('.rowItemUnit')
@@ -232,7 +231,6 @@ function createTableRow(data) {
     itemDiscountPercent: 0,
     unitId: data.unitId,
     itemAmount: 0,
-    // index: tr.dataset.index,
     tr: tr,
   }
 
@@ -281,7 +279,6 @@ function createTableRow(data) {
         itemDiscount: 0,
         itemDiscountPercent: 0,
         unitId: data.unitId,
-        // index: tr.dataset.index,
         itemAmount: 0,
         tr: tr,
       }
@@ -328,7 +325,6 @@ function createTableRow(data) {
     return !(value < 0 || isNaN(value))
   }
   function calRow() {
-    // const index = itemSelectList.findIndex((e) => e.tr == rowData.tr)
     rowData.itemQty = parseFloat(rowItemQty.value)
     const price = parseFloat(rowItemPrice.textContent)
     const total = price * rowData.itemQty
@@ -346,10 +342,8 @@ window.addEventListener('DOMContentLoaded', async () => {
   itemList = await loadItem()
   const { data } = await PosApi.getPrefix()
   receiptCode.value = data.prefix_keyName.padEnd(5, 'X')
-  console.log(data)
   savePos.addEventListener('click', () => saveReceipt())
   modal = initModalSelectItem(dialog, itemList)
-
   _tradeDiscount.addEventListener('change', (e) => {
     calculate()
   })

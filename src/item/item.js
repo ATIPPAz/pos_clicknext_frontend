@@ -1,13 +1,14 @@
 import { initLoader } from '../../plugins/loading.js'
 import { openDialog, closeDialog } from '../../main.js'
 import { initToast } from '../../plugins/toast.js'
+import { statusCode as status } from '../../plugins/statusCode.js'
 import * as ItemApi from '../../plugins/api/itemApi.js'
 import * as UnitApi from '../../plugins/api/unitApi.js'
 
 const body = document.getElementById('bodyPage')
 const templateNoData = document.getElementById('templateNoData')
 const buttonSaveChange = document.getElementById('add')
-const buttonEditChange = document.getElementById('edit')
+
 const templateRowTable = document.getElementById('tableRow')
 const tableBody = document.getElementById('tableBody')
 const priceEdit = document.getElementById('itemPrice')
@@ -60,22 +61,6 @@ const unitValue = {
   },
 }
 
-const typeDialog = {
-  get value() {
-    return type
-  },
-  set value(x) {
-    if (x == 'add') {
-      titleDialog.value = 'เพิ่มสินค้า'
-      itemCodeEdit.disabled = false
-    } else {
-      titleDialog.value = 'แก้ไขสินค้า'
-      itemCodeEdit.disabled = true
-    }
-    type = x
-  },
-}
-
 const titleDialog = {
   get value() {
     return title.textContent
@@ -92,33 +77,35 @@ async function openDialogWithType(itemData) {
   let itemDataDropdown = []
   if (isEdit) {
     itemCodeEdit.disabled = true
-    typeDialog.value = 'edit'
-    buttonSaveChange.style.display = 'none'
-    buttonEditChange.style.display = 'inline-block'
     nameValue.value = itemData.name
     idValue.value = itemData.code
     priceValue.value = itemData.price
     itemDataDropdown = itemData.unit
+    titleDialog.value = 'แก้ไขสินค้า'
+    itemCodeEdit.disabled = true
+    type = 'edit'
   } else {
-    typeDialog.value = 'add'
-    buttonSaveChange.style.display = 'inline-block'
-    buttonEditChange.style.display = 'none'
+    type = 'add'
+    titleDialog.value = 'เพิ่มสินค้า'
+    itemCodeEdit.disabled = false
     nameValue.value = ''
     idValue.value = ''
     priceValue.value = '0'
-    itemDataDropdown = unitData.length > 0 ? unitData[0].id : undefined
+    itemDataDropdown = res.length > 0 ? res[0].id : undefined
   }
 
   setDropdownOption(res, itemDataDropdown)
   loader.setLoadingOff()
   openDialog('dialogItem')
 }
-// function selectItemDropdown(unitData, isEdit, itemData) {
-//   if (isEdit) {
-//     return itemData.unit
-//   }
-//   return unitData.length > 0 ? unitData[0].id : undefined
-// }
+function saveChange() {
+  if (type === 'add') {
+    saveNewItem()
+  } else {
+    saveUpdate()
+  }
+}
+
 async function saveUpdate() {
   if (
     unitValue.value === '' ||
@@ -136,7 +123,7 @@ async function saveUpdate() {
     unitId: +unitValue.value,
   }
   const res = await ItemApi.updateItem(updateBody)
-  if (res.statusCode === 204) {
+  if (res.statusCode === status.updateSuccess) {
     Toast.success('สำเร็จ', 'เพิ่มข้อมูลไอเทมเรียบร้อย')
     await loadTable()
   }
@@ -155,7 +142,7 @@ async function changeItem(row) {
 async function deleteItem(id) {
   loader.setLoadingOn()
   const { statusCode } = await ItemApi.deleteItem(id)
-  if (statusCode === 204) {
+  if (statusCode === status.deleteSuccess) {
     Toast.success('สำเร็จ', 'ลบสำเร็จ')
 
     await loadTable()
@@ -181,7 +168,7 @@ async function saveNewItem() {
       unitId: unitValue.value,
     }
     const res = await ItemApi.createItem(itemPost)
-    if (res.statusCode === 201) {
+    if (res.statusCode === status.createSuccess) {
       Toast.success('สำเร็จ', `เพิ่มข้อมูลไอเทม (${itemPost.itemName}) สำเร็จ `)
       await loadTable()
     } else {
@@ -197,7 +184,7 @@ async function saveNewItem() {
 }
 async function getUnitData() {
   const { statusCode, data } = await UnitApi.getUnit()
-  if (statusCode === 200) {
+  if (statusCode === status.getSuccess) {
     return data.map((e) => {
       return {
         id: e.unitId,
@@ -209,7 +196,7 @@ async function getUnitData() {
 }
 async function getItemData() {
   const { statusCode, data } = await ItemApi.getItem()
-  if (statusCode === 200) {
+  if (statusCode === status.getSuccess) {
     return data.map((e) => {
       return {
         itemId: e.itemId,
@@ -236,44 +223,61 @@ function setDropdownOption(itemUnit, defaultValue) {
     unitValue.value = defaultValue
   }
 }
+function createRow(index, item) {
+  const tr = document.createElement('tr')
+  const clone = templateRowTable.content.cloneNode(true)
+  tr.appendChild(clone)
+  const rowNumber = tr.querySelector('.rowNumber')
+  const rowItemCode = tr.querySelector('.rowItemCode')
+  const rowItemName = tr.querySelector('.rowItemName')
+  const rowItemUnit = tr.querySelector('.rowItemUnit')
+  const rowItemPrice = tr.querySelector('.rowItemPrice')
+  const editButton = tr.querySelector('.editButton')
+  const deleteButton = tr.querySelector('.deleteButton')
+  editButton.addEventListener('click', async () => {
+    editId = item.itemId
+    await openDialogWithType({
+      code: item.itemCode,
+      name: item.itemName,
+      unit: item.unitId,
+      price: item.itemPrice,
+    })
+  })
+  deleteButton.addEventListener('click', async () => {
+    loader.setLoadingOn()
+    const { statusCode } = await ItemApi.deleteItem(item.itemId)
+    if (statusCode === status.deleteSuccess) {
+      Toast.success('สำเร็จ', 'ลบสำเร็จ')
+      await loadTable()
+    } else {
+      Toast.error('ไม่สำเร็จ', 'เกิดข้อผิดพลาด')
+    }
+    loader.setLoadingOff()
+  })
+  rowNumber.textContent = index + 1
+  rowItemCode.textContent = item.itemCode
+  rowItemName.textContent = item.itemName
+  rowItemUnit.textContent = item.unitName
+  rowItemPrice.textContent = item.itemPrice
+  return tr
+}
 async function loadTable() {
   tableBody.innerHTML = ''
   const items = await getItemData()
-  if (items.length > 0) {
-    for (let index = 0; index < items.length; index++) {
-      const item = items[index]
-      const tr = document.createElement('tr')
-      const clone = templateRowTable.content.cloneNode(true)
-      tr.dataset.itemId = item.itemId
-      tr.dataset.rowItemCode = item.itemCode
-      tr.dataset.rowItemName = item.itemName
-      tr.dataset.rowItemUnit = item.unitId
-      tr.dataset.rowItemPrice = item.itemPrice
-      tr.appendChild(clone)
-      const rowNumber = tr.querySelector('.rowNumber')
-      const rowItemCode = tr.querySelector('.rowItemCode')
-      const rowItemName = tr.querySelector('.rowItemName')
-      const rowItemUnit = tr.querySelector('.rowItemUnit')
-      const rowItemPrice = tr.querySelector('.rowItemPrice')
-      const editButton = tr.querySelector('.editButton')
-      const deleteButton = tr.querySelector('.deleteButton')
-      editButton.addEventListener('click', () => changeItem(tr))
-      deleteButton.addEventListener('click', () => deleteItem(item.itemId))
-      rowNumber.textContent = index + 1
-      rowItemCode.textContent = item.itemCode
-      rowItemName.textContent = item.itemName
-      rowItemUnit.textContent = item.unitName
-      rowItemPrice.textContent = item.itemPrice
-      tableBody.appendChild(tr)
-    }
+  if (items.length === 0) {
+    const row = templateNoData.content.cloneNode(true)
+    tableBody.appendChild(row)
   } else {
-    loadNoData()
+    items.forEach((item, index) => {
+      const row = createRow(index, item)
+      tableBody.appendChild(row)
+    })
   }
 }
 async function onPageLoad() {
   loader.setLoadingOn()
-  buttonSaveChange.addEventListener('click', saveNewItem)
-  buttonEditChange.addEventListener('click', saveUpdate)
+  buttonSaveChange.addEventListener('click', saveChange)
+
   buttonCloseDialog.addEventListener('click', () => closeDialog('dialogItem'))
   openDialogButton.addEventListener('click', () =>
     openDialogWithType(undefined),
@@ -281,8 +285,5 @@ async function onPageLoad() {
   await loadTable()
   loader.setLoadingOff()
 }
-function loadNoData() {
-  const clone = templateNoData.content.cloneNode(true)
-  tableBody.appendChild(clone)
-}
+
 onPageLoad()

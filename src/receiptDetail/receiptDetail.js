@@ -1,5 +1,6 @@
 import { initLoader } from '../../plugins/loading.js'
 import { initToast } from '../../plugins/toast.js'
+import { statusCode as status } from '../../plugins/statusCode.js'
 import * as ReceiptApi from '../../plugins/api/receiptApi.js'
 
 const _receiptTotalDiscount = document.getElementById('receiptTotalDiscount')
@@ -76,17 +77,22 @@ const receiptCode = {
   },
 }
 
+function formatDateForDisplay(date) {
+  const dayNo = (date.getDate() + '').padStart(2, '0')
+  const month = (date.getMonth() + 1).toString().padStart(2, '0')
+  const year = date.getFullYear()
+  return `${year}-${month}-${dayNo}`
+}
+
 async function initPage() {
   loader.setLoadingOn()
   const receiptId = new URLSearchParams(window.location.search).get('receiptId')
   const { statusCode, data } = await ReceiptApi.getOneReceipt(receiptId)
-  if (statusCode == 200) {
-    console.log(data)
-    console.log(data.receiptTotalDiscount.toFixed(2))
+  if (statusCode === status.getSuccess) {
     receiptCode.value = data.receiptCode
     titleTag.textContent = `Receipt: ${data.receiptCode} Detail`
-    const date = data.receiptDate.split('T')[0]
-    receiptDate.value = date
+    const date = new Date(data.receiptDate)
+    receiptDate.value = formatDateForDisplay(date)
     receiptTotalBeforeDiscount.value =
       data.receiptTotalBeforeDiscount.toFixed(2)
     receiptTotalDiscount.value = data.receiptTotalDiscount.toFixed(2)

@@ -1,5 +1,6 @@
 import { initToast } from '../../plugins/toast.js'
 import { initLoader } from '../../plugins/loading.js'
+import { statusCode as status } from '../../plugins/statusCode.js'
 import * as ReceiptApi from '../../plugins/api/receiptApi.js'
 
 const templateRowTable = document.getElementById('templateRowTable')
@@ -65,14 +66,13 @@ async function search() {
       startDate.value,
       endDate.value,
     )
-    if (statusCode == 200) {
+    if (statusCode === status.getSuccess) {
       if (data.length > 0) {
         data.forEach((receipt) => {
           const tr = createTableRow(receipt.receiptId)
           assignValueToDataTable(tr, receipt)
         })
       } else {
-        console.log('no')
         loadNodata()
       }
     } else {
@@ -116,9 +116,7 @@ async function onPageLoad() {
     startDate.value,
     endDate.value,
   )
-  if (statusCode == 200) {
-    console.log('ds')
-    console.log(data)
+  if (statusCode === status.getSuccess) {
     if (data.length > 0) {
       data.forEach((receipt) => {
         const tr = createTableRow(receipt.receiptId)

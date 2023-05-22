@@ -1,6 +1,7 @@
 import { initLoader } from '../../plugins/loading.js'
 import { openDialog, closeDialog } from '../../main.js'
 import { initToast } from '../../plugins/toast.js'
+import { statusCode as status } from '../../plugins/statusCode.js'
 import * as UnitApi from '../../plugins/api/unitApi.js'
 
 const buttonSaveChange = document.getElementById('buttonSaveChange')
@@ -48,7 +49,7 @@ async function saveUpdate() {
     unitId: +currentUnitId,
     unitName: unitName.value,
   })
-  if (statusCode != 204) {
+  if (statusCode !== status.updateSuccess) {
     toast.error('ไม่สำเร็จ', 'เกิดข้อผิดพลาด')
   } else {
     toast.success('แก้ไขสำเร็จ', 'แก้ไขหน่วยนับสำเร็จ')
@@ -60,7 +61,7 @@ async function saveUpdate() {
 }
 async function getData() {
   const { statusCode, data } = await UnitApi.getUnit()
-  if (statusCode === 200) {
+  if (statusCode === status.getSuccess) {
     if (data.length <= 0) return []
     return data.map((e) => {
       return {
@@ -87,7 +88,7 @@ async function saveNewUnit() {
   const { statusCode } = await UnitApi.createUnit({
     unitName: unitName.value,
   })
-  if (statusCode != 201) {
+  if (statusCode !== status.createSuccess) {
     toast.error('ไม่สำเร็จ', 'เกิดข้อผิดพลาด')
   } else {
     toast.success('เพิ่มสำเร็จ', 'เพิ่มหน่วยนับสำเร็จ')
@@ -140,7 +141,7 @@ function createRow(index = undefined, item = undefined) {
   deleteButton.addEventListener('click', async () => {
     loader.setLoadingOn()
     const { statusCode } = await UnitApi.deleteUnit(item.unitId)
-    if (statusCode == 204) {
+    if (statusCode === status.deleteSuccess) {
       toast.success('ลบสำเร็จ', 'ลบหน่วยนับสำเร็จ')
       await loadTable()
     } else {
