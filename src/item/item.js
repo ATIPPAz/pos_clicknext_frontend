@@ -132,7 +132,6 @@ async function saveUpdate() {
 }
 
 async function saveNewItem() {
-  loader.setLoadingOn()
   if (
     unitValue.value == '' ||
     idValue.value == '' ||
@@ -140,27 +139,27 @@ async function saveNewItem() {
     priceValue.value == ''
   ) {
     Toast.error('ไม่สำเร็จ', 'กรุณากรอกให้ครบทุกช่อง')
-  } else {
-    const itemPost = {
-      itemCode: idValue.value,
-      itemName: nameValue.value,
-      itemPrice: priceValue.value,
-      unitId: unitValue.value,
-    }
-    const res = await ItemApi.createItem(itemPost)
-    if (res.statusCode === status.createSuccess) {
-      Toast.success('สำเร็จ', `เพิ่มข้อมูลไอเทม (${itemPost.itemName}) สำเร็จ `)
-      await loadTable()
-    } else {
-      Toast.error('ไม่สำเร็จ', 'เพิ่มไม่สำเร็จ เกิดข้อผิดพลาด')
-    }
-    idValue.value = ''
-    nameValue.value = ''
-    unitValue.value = '3'
-    priceValue.value = 0
-    closeDialog('dialogItem')
-    loader.setLoadingOff()
+    return
   }
+  loader.setLoadingOn()
+  const itemPost = {
+    itemCode: idValue.value,
+    itemName: nameValue.value,
+    itemPrice: priceValue.value,
+    unitId: unitValue.value,
+  }
+  const res = await ItemApi.createItem(itemPost)
+  if (res.statusCode === status.createSuccess) {
+    Toast.success('สำเร็จ', `เพิ่มข้อมูลไอเทม (${itemPost.itemName}) สำเร็จ `)
+    await loadTable()
+  } else {
+    Toast.error('ไม่สำเร็จ', 'เพิ่มไม่สำเร็จ เกิดข้อผิดพลาด')
+  }
+  idValue.value = ''
+  nameValue.value = ''
+  priceValue.value = 0
+  closeDialog('dialogItem')
+  loader.setLoadingOff()
 }
 async function getUnitData() {
   const { statusCode, data } = await UnitApi.getUnit()
@@ -193,7 +192,7 @@ async function getItemData() {
 function setDropdownOption(itemUnit, defaultValue) {
   const dropdown = document.getElementById('itemDropdown')
   dropdown.innerHTML = ''
-  itemUnit.forEach((element, i) => {
+  itemUnit.forEach((element) => {
     const option = document.createElement('option')
     option.text = element.value
     option.value = element.id

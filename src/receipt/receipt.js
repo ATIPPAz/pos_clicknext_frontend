@@ -80,14 +80,14 @@ async function loadTable() {
 }
 
 async function search() {
-  if (startDate.value == '' || endDate.value == '') {
-    toast.error('ข้อมูลผิดรูปแบบ', 'กรุณาเลือกวันที่ให้ครบสองอัน')
-    return
-  }
-  if (!validateDate(startDate.value, endDate.value)) {
-    toast.error('ข้อมูลผิดรูปแบบ', 'กรุณาเลือกวันเริ่มต้นก่อนวันสิ้นสุด')
-    return
-  }
+  // if (startDate.value == '' || endDate.value == '') {
+  //   toast.error('ข้อมูลผิดรูปแบบ', 'กรุณาเลือกวันที่ให้ครบสองอัน')
+  //   return
+  // }
+  // if (!validateDate(startDate.value, endDate.value)) {
+  //   toast.error('ข้อมูลผิดรูปแบบ', 'กรุณาเลือกวันเริ่มต้นก่อนวันสิ้นสุด')
+  //   return
+  // }
   loader.setLoadingOn()
   await loadTable()
   loader.setLoadingOff()
